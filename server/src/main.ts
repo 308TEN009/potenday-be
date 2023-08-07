@@ -2,9 +2,12 @@ import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SettingModule } from '@setting';
 import { AppModule } from './app.module';
+import { NestEnvUtil, NEST_ENV } from '@config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<INestApplication>(AppModule);
+  const app = await NestFactory.create<INestApplication>(AppModule, {
+    logger: NestEnvUtil.getNodeEnv() === NEST_ENV.DEV ? ['log'] : false,
+  });
 
   SettingModule.initialize(app);
 

@@ -17,9 +17,8 @@ export class NestEnvUtil {
   static getNodeEnv = (): NestEnvType => {
     const nodeEnv: string | undefined = process.env.NODE_ENV;
 
-    if (NestEnvUtil.isNestEnv(nodeEnv)) {
-      return nodeEnv as any;
-    } else {
+    if (NestEnvUtil.isNestEnv(nodeEnv)) return nodeEnv;
+    else {
       throw new InternalServerErrorException(`NODE_ENV(${nodeEnv})`);
     }
   };

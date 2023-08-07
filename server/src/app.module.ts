@@ -9,7 +9,7 @@ import {
   TransactionModule,
 } from 'typeorm-aop-transaction';
 import { AopModule } from '@toss/nestjs-aop';
-import { ConfigModule } from '@config';
+import { ConfigModule, NestEnvUtil, NEST_ENV } from '@config';
 import { DatabaseModule } from '@database';
 import { QueueModule } from '@queue';
 import { ServerCacheModule } from '@cache';
@@ -19,13 +19,15 @@ import { AppController } from './app.controller';
 import { MailModule } from './mail';
 import { AuthModule } from './auth';
 import { UserModule } from './user';
+import { LoggerModule } from './logger';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
+import { HealthCheckModule } from './health-check';
 
 @Module({
   imports: [
     AopModule,
     TransactionModule.regist({
-      logging: 'all',
+      logging: NestEnvUtil.getNodeEnv() === NEST_ENV.DEV ? 'all' : 'error',
     }),
     ConfigModule,
     ServerCacheModule,
@@ -36,6 +38,8 @@ import { EmailVerificationModule } from './email-verification/email-verification
     MailModule,
     EventEmitterModule,
     EmailVerificationModule,
+    LoggerModule,
+    HealthCheckModule,
   ],
   providers: [
     {

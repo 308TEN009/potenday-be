@@ -6,11 +6,17 @@ import {
   SetBullBoardService,
   SetCorsService,
   SetSecurityService,
+  SetApiVersionService,
 } from './services';
 
 export class SettingModule {
   static initialize(app: INestApplication) {
     const providers: ApplicationSetting[] = [
+      /**
+       * @NOTE https://github.com/nestjs/swagger/issues/1495
+       * app.enableVersioning(); should be called before SwaggerModule.createDocument(...)
+       */
+      new SetApiVersionService(app),
       new SetSwaggerService(app),
       new SetRawBodyService(app),
       new SetBullBoardService(app),
