@@ -13,8 +13,8 @@ export class SetSwaggerService implements ApplicationSetting {
     const app = this.app;
 
     const config = new DocumentBuilder()
-      .setTitle('Nest.js Boilerplate')
-      .setDescription('@KIMBEOBWOO Nestjs REST API boilerplate')
+      .setTitle('Nestjs API Server')
+      .setDescription('@KIMBEOBWOO Nestjs REST API')
       .setVersion('1.0')
       .addCookieAuth(
         CookieName.ACCESS_TOKEN,
