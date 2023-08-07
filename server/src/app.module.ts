@@ -21,6 +21,7 @@ import { AuthModule } from './auth';
 import { UserModule } from './user';
 import { LoggerModule } from './logger';
 import { EmailVerificationModule } from './email-verification/email-verification.module';
+import { HealthCheckModule } from './health-check';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { EmailVerificationModule } from './email-verification/email-verification
     EventEmitterModule,
     EmailVerificationModule,
     LoggerModule,
+    HealthCheckModule,
   ],
   providers: [
     {
