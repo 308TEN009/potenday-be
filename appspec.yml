@@ -1,0 +1,26 @@
+version: 0.0
+os: linux
+files:
+  # 프로덕션 컴포즈 파일 복사
+  - source: docker-compose.prod.yml
+    destination: /home/ec2-user/app
+    overwrite: yes
+  # 릴리즈 컴포즈 파일 복사
+  - source: docker-compose.test.yml
+    destination: /home/ec2-user/app
+    overwrite: yes
+  # Nginx Config 파일 복사
+  # NOTE : docker-compose 에 명시된 nginx 컨테이너의 볼륨 경로와 일치시켜야한다.
+  - source: nginx/nginx.prod.v1.conf
+    destination: /home/ec2-user/app/nginx
+    overwrite: yes
+file_exists_behavior: OVERWRITE
+hooks:
+  # AfterInstall 은 code deploy 에 의해 파일이 복사되고 난 뒤 실행된다.
+  AfterInstall:
+    - location: /scripts/aws/install.sh
+      timeout: 300
+  # ApplicationStart 의 timeout 은 500 보다 크게 설정.
+  ApplicationStart:
+    - location: /scripts/aws/deploy.sh
+      timeout: 1000

@@ -1,0 +1,56 @@
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  TransactionMiddleware,
+  TransactionModule,
+} from 'typeorm-aop-transaction';
+import { AopModule } from '@toss/nestjs-aop';
+import { ConfigModule } from '@config';
+import { DatabaseModule } from '@database';
+import { QueueModule } from '@queue';
+import { ServerCacheModule } from '@cache';
+import { EventEmitterModule } from '@event-emitter';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { AppController } from './app.controller';
+import { MailModule } from './mail';
+import { AuthModule } from './auth';
+import { UserModule } from './user';
+import { EmailVerificationModule } from './email-verification/email-verification.module';
+
+@Module({
+  imports: [
+    AopModule,
+    TransactionModule.regist({
+      logging: 'all',
+    }),
+    ConfigModule,
+    ServerCacheModule,
+    QueueModule,
+    DatabaseModule,
+    AuthModule,
+    UserModule,
+    MailModule,
+    EventEmitterModule,
+    EmailVerificationModule,
+  ],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+  ],
+  controllers: [AppController],
+})
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TransactionMiddleware).forRoutes('*');
+  }
+}
