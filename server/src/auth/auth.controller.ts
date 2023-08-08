@@ -12,12 +12,14 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
-import { AuthName } from '@common';
+import { AuthName, CustomHttpStatus } from '@common';
 import { User } from './decorators';
 import { KakaoAuthGuard, NaverAuthGuard, JwtAuthGuard } from './guards';
 import { RedirectInterceptor } from './interceptors';
@@ -26,6 +28,12 @@ import { RefreshAccessTokenDto } from './dtos/refresh-access-token.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
+@ApiInternalServerErrorResponse({
+  description: '서버 오류',
+})
+@ApiUnauthorizedResponse({
+  description: '로그인 필요, 유효하지 않은 엑세스 토큰',
+})
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -38,9 +46,6 @@ export class AuthController {
     - accessToken : 엑세스 토큰은 30분의 유효기간을 가집니다.
     - refreshToken : 리프레시 토큰은 14일의 유효기간을 가집니다.
     `,
-  })
-  @ApiResponse({
-    status: HttpStatus.PERMANENT_REDIRECT,
   })
   @Version(VERSION_NEUTRAL)
   @Get('login/kakao')
@@ -64,12 +69,12 @@ export class AuthController {
   @ApiOperation({
     summary: '네이버 로그인',
     description: `
-    ### 소셜 로그인/회원가입
-    - 소셜 인증 이메일 중복 여부 기준 회원가입/로그인 수행
-    - 성공시 **ENV 파일 >>> LOGIN_SUCCESS_REDIRECT_URL** 에 정의된 Redirect URL 로 이동
-      - accessToken : 엑세스 토큰
-      - refreshToken : 리프레시 토큰 
-      `,
+  ### 소셜 로그인/회원가입
+  - 소셜 인증 이메일 중복 여부 기준 회원가입/로그인 수행
+  - 성공시 **ENV 파일 >>> LOGIN_SUCCESS_REDIRECT_URL** 에 정의된 Redirect URL 로 이동
+    - accessToken : 엑세스 토큰
+    - refreshToken : 리프레시 토큰 
+    `,
   })
   @Version(VERSION_NEUTRAL)
   @Get('login/naver')
@@ -100,6 +105,11 @@ export class AuthController {
       `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @ApiForbiddenResponse({
+    status: CustomHttpStatus.INVALID_REFRESH_TOKEN,
+    description:
+      '로그인 필요, 해당 유저에게 유효한 리프레시 토큰이 존재하지 않음',
+  })
   @Post('token')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
