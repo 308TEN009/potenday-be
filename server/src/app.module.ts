@@ -21,6 +21,7 @@ import { AuthModule } from './auth';
 import { UserModule } from './user';
 import { LoggerModule } from './logger';
 import { HealthCheckModule } from './health-check';
+import { EmploymentOpportunityModule } from './employment-opportunity';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { HealthCheckModule } from './health-check';
     EventEmitterModule,
     LoggerModule,
     HealthCheckModule,
+    EmploymentOpportunityModule,
   ],
   providers: [
     {
