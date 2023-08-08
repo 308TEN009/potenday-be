@@ -5,7 +5,7 @@ services:
   nestjs-app:
     container_name: nestjs-app
     restart: always
-    image: qjqdn1568/nestjs-boilerplate-auth:latest
+    image: qjqdn1568/potenday-308-nestjs:latest
     environment:
       - NODE_ENV=production
       - SERVER_PORT=3000
