@@ -2,7 +2,6 @@ import { IsMailConfig } from '@config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CreateEmailVerificationEventListener } from './listeners/create-email-verification-event.listener';
 
 @Module({
   imports: [
@@ -23,6 +22,5 @@ import { CreateEmailVerificationEventListener } from './listeners/create-email-v
       inject: [ConfigService],
     }),
   ],
-  providers: [CreateEmailVerificationEventListener],
 })
 export class MailModule {}

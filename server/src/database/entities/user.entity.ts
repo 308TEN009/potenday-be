@@ -3,7 +3,6 @@ import { Exclude } from 'class-transformer';
 import { IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { EmailVerification } from './email-verification.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { SocialAccount } from './social-account.entity';
 
@@ -78,16 +77,6 @@ export class User extends BaseEntity {
     cascade: ['insert'],
   })
   socialAccountList?: SocialAccount[];
-
-  @OneToMany(
-    () => EmailVerification,
-    (emailVerification) => emailVerification.user,
-    {
-      cascade: ['remove'],
-    },
-  )
-  @ApiHideProperty()
-  emailVerificationList?: EmailVerification[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: ['remove'],

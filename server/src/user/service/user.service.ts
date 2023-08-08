@@ -47,7 +47,6 @@ export class UserService implements IsUserService {
     const result = await this.userRepository.find({
       relations: {
         socialAccountList: true,
-        emailVerificationList: true,
         refreshTokenList: true,
       },
       order: {
