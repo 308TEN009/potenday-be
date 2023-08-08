@@ -3,7 +3,9 @@ import { Exclude } from 'class-transformer';
 import { IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { EmailVerification } from './email-verification.entity';
+import { BookmarkSite } from './bookmark-site.entity';
+import { EmploymentOpportunity } from './employment-opportunity.entity';
+import { Experience } from './experience.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { SocialAccount } from './social-account.entity';
 
@@ -77,22 +79,21 @@ export class User extends BaseEntity {
   @OneToMany(() => SocialAccount, (socialAccount) => socialAccount.user, {
     cascade: ['insert'],
   })
-  socialAccountList?: SocialAccount[];
-
-  @OneToMany(
-    () => EmailVerification,
-    (emailVerification) => emailVerification.user,
-    {
-      cascade: ['remove'],
-    },
-  )
-  @ApiHideProperty()
-  emailVerificationList?: EmailVerification[];
+  socialAccountList!: SocialAccount[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: ['remove'],
   })
-  refreshTokenList?: RefreshToken[];
+  refreshTokenList!: RefreshToken[];
+
+  @OneToMany(() => Experience, (exp) => exp.user)
+  experienceList!: Experience[];
+
+  @OneToMany(() => BookmarkSite, (bks) => bks.user)
+  bookmartSiteList!: BookmarkSite[];
+
+  @OneToMany(() => EmploymentOpportunity, (emp) => emp.user)
+  employmentOpportunityList!: EmploymentOpportunity[];
 
   constructor(data: User) {
     super();
