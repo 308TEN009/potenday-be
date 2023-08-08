@@ -9,9 +9,6 @@ export interface UserJWTPayload {
   readonly authType: SocialProviderType;
 }
 
-/**
- * @deprecated Not Using Cookie
- */
 export interface UserRefreshJwtPayload extends UserJWTPayload {
   /** 리프레시 토큰 PK */
   readonly refreshToken: string;

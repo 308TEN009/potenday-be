@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -37,11 +37,7 @@ export class User extends BaseEntity {
   @Length(5, 30)
   userId!: string;
 
-  @ApiProperty({
-    description: '암호화된 유저 PW',
-    type: String,
-    example: 'adg3asdf41asxasdf2656x',
-  })
+  @ApiHideProperty()
   @Exclude()
   @Column({
     type: 'varchar',
@@ -90,6 +86,7 @@ export class User extends BaseEntity {
       cascade: ['remove'],
     },
   )
+  @ApiHideProperty()
   emailVerificationList?: EmailVerification[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {

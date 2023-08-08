@@ -10,7 +10,12 @@ import {
   Version,
   VERSION_NEUTRAL,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 import { AuthName } from '@common';
 import { User } from './decorators';
@@ -26,6 +31,16 @@ export class AuthController {
 
   @ApiOperation({
     summary: '카카오 로그인',
+    description: `
+  ### 소셜 로그인/회원가입
+  - 소셜 인증 이메일 중복 여부 기준 회원가입/로그인 수행
+  - 성공시 **ENV 파일 >>> LOGIN_SUCCESS_REDIRECT_URL** 에 정의된 Redirect URL 로 이동
+    - accessToken : 엑세스 토큰은 30분의 유효기간을 가집니다.
+    - refreshToken : 리프레시 토큰은 14일의 유효기간을 가집니다.
+    `,
+  })
+  @ApiResponse({
+    status: HttpStatus.PERMANENT_REDIRECT,
   })
   @Version(VERSION_NEUTRAL)
   @Get('login/kakao')
@@ -48,6 +63,13 @@ export class AuthController {
 
   @ApiOperation({
     summary: '네이버 로그인',
+    description: `
+    ### 소셜 로그인/회원가입
+    - 소셜 인증 이메일 중복 여부 기준 회원가입/로그인 수행
+    - 성공시 **ENV 파일 >>> LOGIN_SUCCESS_REDIRECT_URL** 에 정의된 Redirect URL 로 이동
+      - accessToken : 엑세스 토큰
+      - refreshToken : 리프레시 토큰 
+      `,
   })
   @Version(VERSION_NEUTRAL)
   @Get('login/naver')
@@ -70,6 +92,12 @@ export class AuthController {
 
   @ApiOperation({
     summary: '엑세스 토큰 재발급',
+    description: `
+  ### 리프레시 토큰을 사용한 엑세스 토큰 재발급
+  - 엑세스 토큰 재발급
+  - 리프레시 토큰 재발급
+    - 재발급에 사용한 리프레시 토큰은 재사용 할 수 없습니다. 반환값에 포함된 새로운 리프레시 토큰을 사용해야합니다.
+      `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
   @Post('token')
@@ -87,6 +115,11 @@ export class AuthController {
 
   @ApiOperation({
     summary: '로그아웃',
+    description: `
+  ### 계정 로그아웃
+  - 실제 각 소셜 인증 서버를 통한 로그아웃은 수행하지 않습니다.
+  - 모든 리프레시 토큰을 사용 불가 처리하고 인증 블랙리스트에 해당 유저를 추가해 인증이 필요한 모든 API 사용을 차단합니다.
+    `,
   })
   @Post('logout')
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)

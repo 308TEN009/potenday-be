@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import {
   Column,
@@ -52,6 +52,7 @@ export class RefreshToken extends BaseEntity {
   @IsNotEmpty()
   userId!: string;
 
+  @ApiHideProperty()
   @ManyToOne(() => User, (user) => user.refreshTokenList, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
