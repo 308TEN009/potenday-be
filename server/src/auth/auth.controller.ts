@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -9,22 +10,14 @@ import {
   Version,
   VERSION_NEUTRAL,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
-import { CookieName } from '@common';
+import { AuthName } from '@common';
 import { User } from './decorators';
-import {
-  KakaoAuthGuard,
-  NaverAuthGuard,
-  JwtAuthRefreshGuard,
-  JwtAuthGuard,
-} from './guards';
+import { KakaoAuthGuard, NaverAuthGuard, JwtAuthGuard } from './guards';
 import { RedirectInterceptor } from './interceptors';
-import {
-  SocialLoginResonse,
-  UserRefreshJwtPayload,
-  UserJWTPayload,
-} from './interfaces';
+import { SocialLoginResonse, UserJWTPayload } from './interfaces';
+import { RefreshAccessTokenDto } from './dtos/refresh-access-token.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -78,21 +71,25 @@ export class AuthController {
   @ApiOperation({
     summary: '엑세스 토큰 재발급',
   })
-  @ApiCookieAuth(CookieName.ACCESS_TOKEN)
-  @ApiCookieAuth(CookieName.REFRESH_TOKEN)
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
   @Post('token')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(RedirectInterceptor)
-  @UseGuards(JwtAuthRefreshGuard)
-  refreshAccessToken(@User() user: UserRefreshJwtPayload) {
-    return this.authService.refreshAccessToken(user);
+  @UseGuards(JwtAuthGuard)
+  refreshAccessToken(
+    @User() user: UserJWTPayload,
+    @Body() dto: RefreshAccessTokenDto,
+  ) {
+    return this.authService.refreshAccessToken({
+      ...user,
+      refreshToken: dto.refreshToken,
+    });
   }
 
   @ApiOperation({
     summary: '로그아웃',
   })
   @Post('logout')
-  @ApiCookieAuth(CookieName.ACCESS_TOKEN)
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   logOut(@User() user: UserJWTPayload) {
@@ -103,6 +100,7 @@ export class AuthController {
     summary: 'JWT 토큰 테스트',
     deprecated: true,
   })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
   @Get('test')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)

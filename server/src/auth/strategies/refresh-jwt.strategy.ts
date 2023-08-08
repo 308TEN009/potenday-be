@@ -8,8 +8,7 @@ import {
 } from '../interfaces/user-jwt-payload.interface';
 import { Request } from 'express';
 import { IsAuthenticationConfig } from '@config';
-import { CookieName } from '@common';
-import { extractTokenFromRequest } from '../utils';
+import { extractTokenFromHeader } from '../utils';
 
 /**
  * RT 를 사용한 JWT AT 재발급 전략
@@ -24,7 +23,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) => extractTokenFromRequest(req, CookieName.ACCESS_TOKEN),
+        (req: Request) => extractTokenFromHeader(req),
       ]),
       ignoreExpiration: true, // 만료 여부 무시
       secretOrKey: configService.get('jwtPrivateKey'),
@@ -42,11 +41,13 @@ export class RefreshJwtStrategy extends PassportStrategy(
     req: Request,
     accessTokenPayload: UserJWTPayload,
   ): UserRefreshJwtPayload | null {
-    const refreshToken = extractTokenFromRequest(req, CookieName.REFRESH_TOKEN);
+    const refreshToken = extractTokenFromHeader(req);
 
     if (!refreshToken) {
       return null;
     }
+
+    console.log(req.headers);
 
     return {
       ...accessTokenPayload,

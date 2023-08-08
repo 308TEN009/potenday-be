@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable, tap, map } from 'rxjs';
 import { CookieOptions, Response as ExpressResponse } from 'express';
-import { CookieName } from '@common';
+import { AuthName } from '@common';
 import { AuthenticationResponse } from '../interfaces';
 
 @Injectable()
@@ -28,13 +28,9 @@ export class AddTokenToCookiePostInterceptor<T extends AuthenticationResponse>
         const accessToken = data.accessToken;
         const refreshToken = data.refreshToken;
 
+        response.cookie(AuthName.ACCESS_TOKEN, accessToken, this.cookieOption);
         response.cookie(
-          CookieName.ACCESS_TOKEN,
-          accessToken,
-          this.cookieOption,
-        );
-        response.cookie(
-          CookieName.REFRESH_TOKEN,
+          AuthName.REFRESH_TOKEN,
           refreshToken,
           this.cookieOption,
         );

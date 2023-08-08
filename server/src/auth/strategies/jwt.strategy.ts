@@ -3,11 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { CookieName } from 'src/common';
 import { IsAuthenticationConfig } from '@config';
 import { AuthInjector } from '../common';
 import { BlackListService, UserJWTPayload } from '../interfaces';
-import { extractTokenFromRequest } from '../utils';
+import { extractTokenFromHeader } from '../utils';
 
 /**
  * JWT 토큰을 사용한 요청 권한 인가 전략
@@ -21,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) => extractTokenFromRequest(req, CookieName.ACCESS_TOKEN),
+        (req: Request) => extractTokenFromHeader(req),
       ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('jwtPrivateKey'),
