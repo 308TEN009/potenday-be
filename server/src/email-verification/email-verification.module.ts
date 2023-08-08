@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { EmailVerificationInjector } from './common/email-verification.injector';
 import { EmailVerificationService } from './services/email-verification.service';
-import { EmailVerificationController } from './email-verification.controller';
 import { TransactionModule } from 'typeorm-aop-transaction';
 import { EmailVerification } from '@database';
 
@@ -13,6 +12,6 @@ import { EmailVerification } from '@database';
       useClass: EmailVerificationService,
     },
   ],
-  controllers: [EmailVerificationController],
+  controllers: [],
 })
 export class EmailVerificationModule {}
