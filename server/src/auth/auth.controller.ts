@@ -6,22 +6,20 @@ import {
   Post,
   UseGuards,
   UseInterceptors,
+  Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 import { CookieName } from '@common';
 import { User } from './decorators';
-import { SignInResponseDto } from './dtos';
 import {
   KakaoAuthGuard,
   NaverAuthGuard,
   JwtAuthRefreshGuard,
   JwtAuthGuard,
 } from './guards';
-import {
-  RedirectInterceptor,
-  AddTokenToCookiePostInterceptor,
-} from './interceptors';
+import { RedirectInterceptor } from './interceptors';
 import {
   SocialLoginResonse,
   UserRefreshJwtPayload,
@@ -36,6 +34,7 @@ export class AuthController {
   @ApiOperation({
     summary: '카카오 로그인',
   })
+  @Version(VERSION_NEUTRAL)
   @Get('login/kakao')
   @HttpCode(HttpStatus.OK)
   @UseGuards(KakaoAuthGuard)
@@ -45,12 +44,10 @@ export class AuthController {
     summary: '카카오 로그인 콜백 (for OAuth Authorization Server)',
     deprecated: true,
   })
+  @Version(VERSION_NEUTRAL)
   @Get('login/kakao/callback')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(
-    RedirectInterceptor,
-    new AddTokenToCookiePostInterceptor<SignInResponseDto>(),
-  )
+  @UseInterceptors(RedirectInterceptor)
   @UseGuards(KakaoAuthGuard)
   kakaoLoginCallback(@User() socialLoginResonse: SocialLoginResonse) {
     return this.authService.signInSocialUser(socialLoginResonse);
@@ -59,6 +56,7 @@ export class AuthController {
   @ApiOperation({
     summary: '네이버 로그인',
   })
+  @Version(VERSION_NEUTRAL)
   @Get('login/naver')
   @HttpCode(HttpStatus.OK)
   @UseGuards(NaverAuthGuard)
@@ -68,12 +66,10 @@ export class AuthController {
     summary: '네이버 로그인 콜백 (for OAuth Authorization Server)',
     deprecated: true,
   })
+  @Version(VERSION_NEUTRAL)
   @Get('login/naver/callback')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(
-    RedirectInterceptor,
-    new AddTokenToCookiePostInterceptor<SignInResponseDto>(),
-  )
+  @UseInterceptors(RedirectInterceptor)
   @UseGuards(NaverAuthGuard)
   naverLoginCallback(@User() socialLoginResonse: SocialLoginResonse) {
     return this.authService.signInSocialUser(socialLoginResonse);
@@ -86,7 +82,7 @@ export class AuthController {
   @ApiCookieAuth(CookieName.REFRESH_TOKEN)
   @Post('token')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(new AddTokenToCookiePostInterceptor<SignInResponseDto>())
+  @UseInterceptors(RedirectInterceptor)
   @UseGuards(JwtAuthRefreshGuard)
   refreshAccessToken(@User() user: UserRefreshJwtPayload) {
     return this.authService.refreshAccessToken(user);
