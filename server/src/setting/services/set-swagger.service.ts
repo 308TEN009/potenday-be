@@ -1,7 +1,7 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ApplicationSetting } from '../interfaces/application-setting.interface';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CookieName } from '@common';
+import { AuthName } from '@common';
 
 /**
  * Swagger Setting
@@ -16,22 +16,14 @@ export class SetSwaggerService implements ApplicationSetting {
       .setTitle('Nestjs API Server')
       .setDescription('@KIMBEOBWOO Nestjs REST API')
       .setVersion('1.0')
-      .addCookieAuth(
-        CookieName.ACCESS_TOKEN,
+      .addBearerAuth(
         {
-          type: 'apiKey',
-          in: 'cookie',
+          type: 'http',
           scheme: 'bearer',
+          bearerFormat: 'JWT',
+          in: 'header',
         },
-        CookieName.ACCESS_TOKEN,
-      )
-      .addCookieAuth(
-        CookieName.REFRESH_TOKEN,
-        {
-          type: 'apiKey',
-          in: 'cookie',
-        },
-        CookieName.REFRESH_TOKEN,
+        AuthName.ACCESS_TOKEN,
       )
       .build();
 

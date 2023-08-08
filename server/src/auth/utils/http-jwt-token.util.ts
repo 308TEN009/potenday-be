@@ -1,9 +1,9 @@
-import { CookieNameType } from '@common';
+import { AuthNameType } from '@common';
 import { Request } from 'express';
 
 export const extractTokenFromRequest = (
   req: Request,
-  cookieName: CookieNameType,
+  cookieName: AuthNameType,
 ): string | null => {
   if (
     req.cookies &&
@@ -15,3 +15,8 @@ export const extractTokenFromRequest = (
 
   return null;
 };
+
+export function extractTokenFromHeader(request: Request): string | null {
+  const [type, token] = request.headers.authorization?.split(' ') ?? [];
+  return type === 'Bearer' ? token : null;
+}

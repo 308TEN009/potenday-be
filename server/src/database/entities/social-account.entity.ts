@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
 
 export type SocialProviderType =
@@ -102,6 +102,7 @@ export class SocialAccount extends BaseEntity {
   @Length(1)
   userId!: string;
 
+  @ApiHideProperty()
   @ManyToOne(() => User, (user) => user.socialAccountList, {
     onDelete: 'CASCADE',
     onUpdate: 'NO ACTION',
