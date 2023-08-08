@@ -53,6 +53,6 @@ jobs:
         run: |
           aws deploy create-deployment \
             --application-name potenday-308-009 \
-            --deployment-group-name production  \
-            --deployment-config-name ${{ secrets.PRODUCTION_AWS_DEPLOY_CONFIG }} \
+            --deployment-group-name production \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
