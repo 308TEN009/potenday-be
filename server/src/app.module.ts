@@ -22,6 +22,7 @@ import { UserModule } from './user';
 import { LoggerModule } from './logger';
 import { HealthCheckModule } from './health-check';
 import { EmploymentOpportunityModule } from './employment-opportunity';
+import { ExperienceModule } from './experience';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { EmploymentOpportunityModule } from './employment-opportunity';
     LoggerModule,
     HealthCheckModule,
     EmploymentOpportunityModule,
+    ExperienceModule,
   ],
   providers: [
     {

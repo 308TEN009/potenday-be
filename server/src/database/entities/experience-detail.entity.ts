@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import {
   Column,
   Entity,
@@ -27,15 +27,15 @@ export class ExperienceDetail extends BaseEntity {
   _id!: string;
 
   @ApiProperty({
-    description: '경험 상세 내용',
+    description: '경험 세부사항',
     type: String,
-    example: 'dasdfasdfasdfasdfasdfasdfasd',
+    example: '제 경험 세부사항은 다음과 같습니다...',
   })
   @Column({
     name: 'content',
     type: 'text',
   })
-  @IsDate()
+  @IsString()
   content!: string;
 
   @ApiProperty({
