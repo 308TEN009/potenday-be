@@ -23,6 +23,7 @@ import { LoggerModule } from './logger';
 import { HealthCheckModule } from './health-check';
 import { EmploymentOpportunityModule } from './employment-opportunity';
 import { ExperienceModule } from './experience';
+import { BookmarkSiteModule } from './bookmark-site';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ExperienceModule } from './experience';
     HealthCheckModule,
     EmploymentOpportunityModule,
     ExperienceModule,
+    BookmarkSiteModule,
   ],
   providers: [
     {

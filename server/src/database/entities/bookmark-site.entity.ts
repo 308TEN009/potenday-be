@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import {
   Column,
   Entity,
@@ -36,7 +36,8 @@ export class BookmarkSite extends BaseEntity {
     type: 'varchar',
     length: 255,
   })
-  @IsDate()
+  @IsString()
+  @IsNotEmpty()
   name!: string;
 
   @ApiProperty({
@@ -49,7 +50,8 @@ export class BookmarkSite extends BaseEntity {
     type: 'varchar',
     length: 255,
   })
-  @IsDate()
+  @IsString()
+  @IsNotEmpty()
   url!: string;
 
   @ApiProperty({
