@@ -39,7 +39,7 @@ export class NaverAuthenticationStartegy
         refreshToken: refreshToken,
         name: profile.name,
         email: profile.email,
-        phoneNumber: profile.mobile,
+        phoneNumber: '010-0000-0000',
         type: 'naver',
       };
     } catch (e) {

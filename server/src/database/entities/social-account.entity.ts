@@ -17,6 +17,7 @@ export const SocialProviderTypeValue = {
   KAKAO: 'kakao',
   NAVER: 'naver',
   FACEBOOK: 'facebook',
+  GOOGLE: 'google',
 } as const;
 
 @Entity('social_account')
@@ -88,7 +89,7 @@ export class SocialAccount extends BaseEntity {
   })
   @IsString()
   @Length(1)
-  refreshToken!: string;
+  refreshToken!: string | null;
 
   @ApiProperty({
     description: '유저 Id',

@@ -29,6 +29,7 @@ import {
   NaverAuthGuard,
   JwtAuthGuard,
   FacebookAuthGuard,
+  GoogleAuthGuard,
 } from './guards';
 import { RedirectInterceptor } from './interceptors';
 import { SocialLoginResonse, UserJWTPayload } from './interfaces';
@@ -104,6 +105,35 @@ export class AuthController {
   @UseInterceptors(RedirectInterceptor)
   @UseGuards(NaverAuthGuard)
   naverLoginCallback(@User() socialLoginResonse: SocialLoginResonse) {
+    return this.authService.signInSocialUser(socialLoginResonse);
+  }
+
+  @ApiOperation({
+    summary: '구글 로그인',
+    description: `
+  ### 소셜 로그인/회원가입
+  - 소셜 인증 이메일 중복 여부 기준 회원가입/로그인 수행
+  - 성공시 **ENV 파일 >>> LOGIN_SUCCESS_REDIRECT_URL** 에 정의된 Redirect URL 로 이동
+    - accessToken : 엑세스 토큰은 30분의 유효기간을 가집니다.
+    - refreshToken : 리프레시 토큰은 14일의 유효기간을 가집니다.
+    `,
+  })
+  @Version(VERSION_NEUTRAL)
+  @Get('login/google')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(GoogleAuthGuard)
+  async googleLogin() {}
+
+  @ApiOperation({
+    summary: '구글 로그인 콜백 (for OAuth Authorization Server)',
+    deprecated: true,
+  })
+  @Version(VERSION_NEUTRAL)
+  @Get('login/google/callback')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(RedirectInterceptor)
+  @UseGuards(GoogleAuthGuard)
+  googleLoginCallback(@User() socialLoginResonse: SocialLoginResonse) {
     return this.authService.signInSocialUser(socialLoginResonse);
   }
 

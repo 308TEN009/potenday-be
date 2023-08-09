@@ -1,5 +1,6 @@
 import { Profile as _NaverProfile } from 'passport-naver-v2';
 import { Profile as _FacebookProfile } from 'passport-facebook';
+import { Profile as _GoogleProfile } from 'passport-google-oauth20';
 
 export interface KakaoProfile {
   id: number;
@@ -27,3 +28,5 @@ export interface FacebookProfile extends _FacebookProfile {
 
   username: string;
 }
+
+export interface GoogleProfile extends _GoogleProfile {}

@@ -9,6 +9,7 @@ import {
   IsPostgresDatabaseConfig,
   IsRedisConfig,
 } from './interfaces';
+import { IsGoogleAuthenticationConfig } from './interfaces/google-authentication.config.interface';
 
 /**
  * If additional environment variables are required,
@@ -19,6 +20,7 @@ type ConfigSchema = IsPostgresDatabaseConfig &
   IsAuthenticationConfig &
   IsKakaoAuthenticationConfig &
   IsFacebookAuthenticationConfig &
+  IsGoogleAuthenticationConfig &
   IsMailConfig &
   IsNaverAuthenticationConfig &
   IsOpenAIConfig;
@@ -50,6 +52,10 @@ export default () => {
     naverClientId: Joi.string().required(),
     naverCallbackUrl: Joi.string().required(),
     naverClientSecret: Joi.string().required(),
+
+    googleClientId: Joi.string().required(),
+    googleCallbackUrl: Joi.string().required(),
+    googleClientSecret: Joi.string().required(),
 
     facebookClientId: Joi.string().required(),
     facebookCallbackUrl: Joi.string().required(),
@@ -91,6 +97,10 @@ export default () => {
     facebookClientId: process.env.FACEBOOK_CLIENT_ID,
     facebookClientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
 
     mailHost: process.env.NAVER_MAIL_HOST,
     mailPort: process.env.NAVER_MAIL_PORT,

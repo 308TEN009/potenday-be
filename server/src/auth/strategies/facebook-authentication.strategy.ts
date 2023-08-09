@@ -43,7 +43,7 @@ export class FacebookAuthenticationStartegy
         refreshToken: refreshToken,
         name: profile.username,
         email: profile.email,
-        phoneNumber: '010-3252-2568',
+        phoneNumber: '010-0000-0000',
         type: 'facebook',
       };
     } catch (e) {
