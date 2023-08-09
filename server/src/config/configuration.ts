@@ -4,6 +4,7 @@ import {
   IsKakaoAuthenticationConfig,
   IsMailConfig,
   IsNaverAuthenticationConfig,
+  IsOpenAIConfig,
   IsPostgresDatabaseConfig,
   IsRedisConfig,
 } from './interfaces';
@@ -17,7 +18,8 @@ type ConfigSchema = IsPostgresDatabaseConfig &
   IsAuthenticationConfig &
   IsKakaoAuthenticationConfig &
   IsMailConfig &
-  IsNaverAuthenticationConfig;
+  IsNaverAuthenticationConfig &
+  IsOpenAIConfig;
 
 /**
  * Perform validation of environment variable objects with a given interface.
@@ -52,6 +54,8 @@ export default () => {
     mailUser: Joi.string().required(),
     mailPass: Joi.string().required(),
     mailFrom: Joi.string().required(),
+
+    openAiApiKey: Joi.string().required(),
   });
 
   // validate target values
@@ -83,6 +87,8 @@ export default () => {
     mailUser: process.env.NAVER_MAIL_USER,
     mailPass: process.env.NAVER_MAIL_PASS,
     mailFrom: process.env.NAVER_MAIL_FROM,
+
+    openAiApiKey: process.env.OPENAI_API_KEY,
   };
 
   const { error, value } = schema.validate(config);

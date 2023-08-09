@@ -15,12 +15,12 @@ import { AuthInjector } from './common/auth.injector';
 import { AccessTokenService } from './services/access-token.service';
 import { NaverAuthenticationStartegy } from './strategies/naver-authentication.strategy';
 import { IsAuthenticationConfig } from '@config';
-import { EmailVerification, RefreshToken } from '@database';
+import { RefreshToken } from '@database';
 import { BlackListService } from './services/black-list.service';
 
 @Module({
   imports: [
-    TransactionModule.setRepository([EmailVerification, RefreshToken]),
+    TransactionModule.setRepository([RefreshToken]),
     PassportModule,
     JwtModule.registerAsync({
       useFactory: (

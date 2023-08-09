@@ -1,2 +1,2 @@
 export * from './class-constructor.type';
-export * from './cookie.type';
+export * from './auth.type';

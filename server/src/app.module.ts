@@ -20,8 +20,12 @@ import { MailModule } from './mail';
 import { AuthModule } from './auth';
 import { UserModule } from './user';
 import { LoggerModule } from './logger';
-import { EmailVerificationModule } from './email-verification/email-verification.module';
 import { HealthCheckModule } from './health-check';
+import { EmploymentOpportunityModule } from './employment-opportunity';
+import { ExperienceModule } from './experience';
+import { BookmarkSiteModule } from './bookmark-site';
+import { OpenAiModule } from './open-ai';
+import { NewsModule } from './news';
 
 @Module({
   imports: [
@@ -37,9 +41,13 @@ import { HealthCheckModule } from './health-check';
     UserModule,
     MailModule,
     EventEmitterModule,
-    EmailVerificationModule,
     LoggerModule,
     HealthCheckModule,
+    EmploymentOpportunityModule,
+    ExperienceModule,
+    BookmarkSiteModule,
+    OpenAiModule,
+    NewsModule,
   ],
   providers: [
     {

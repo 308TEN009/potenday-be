@@ -1,9 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { IsString, Length } from 'class-validator';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { EmailVerification } from './email-verification.entity';
+import { BookmarkSite } from './bookmark-site.entity';
+import { EmploymentOpportunity } from './employment-opportunity.entity';
+import { Experience } from './experience.entity';
+import { News } from './news.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { SocialAccount } from './social-account.entity';
 
@@ -37,11 +40,7 @@ export class User extends BaseEntity {
   @Length(5, 30)
   userId!: string;
 
-  @ApiProperty({
-    description: '암호화된 유저 PW',
-    type: String,
-    example: 'adg3asdf41asxasdf2656x',
-  })
+  @ApiHideProperty()
   @Exclude()
   @Column({
     type: 'varchar',
@@ -81,21 +80,24 @@ export class User extends BaseEntity {
   @OneToMany(() => SocialAccount, (socialAccount) => socialAccount.user, {
     cascade: ['insert'],
   })
-  socialAccountList?: SocialAccount[];
-
-  @OneToMany(
-    () => EmailVerification,
-    (emailVerification) => emailVerification.user,
-    {
-      cascade: ['remove'],
-    },
-  )
-  emailVerificationList?: EmailVerification[];
+  socialAccountList!: SocialAccount[];
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     cascade: ['remove'],
   })
-  refreshTokenList?: RefreshToken[];
+  refreshTokenList!: RefreshToken[];
+
+  @OneToMany(() => Experience, (exp) => exp.user)
+  experienceList!: Experience[];
+
+  @OneToMany(() => BookmarkSite, (bks) => bks.user)
+  bookmartSiteList!: BookmarkSite[];
+
+  @OneToMany(() => EmploymentOpportunity, (emp) => emp.user)
+  employmentOpportunityList!: EmploymentOpportunity[];
+
+  @OneToMany(() => News, (emp) => emp.user)
+  newsList!: News[];
 
   constructor(data: User) {
     super();
