@@ -25,6 +25,7 @@ import { EmploymentOpportunityModule } from './employment-opportunity';
 import { ExperienceModule } from './experience';
 import { BookmarkSiteModule } from './bookmark-site';
 import { OpenAiModule } from './open-ai';
+import { NewsModule } from './news';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { OpenAiModule } from './open-ai';
     ExperienceModule,
     BookmarkSiteModule,
     OpenAiModule,
+    NewsModule,
   ],
   providers: [
     {

@@ -30,7 +30,7 @@ import {
 } from './interfaces';
 
 @Controller('employment-opportunity')
-@ApiTags('EmploymentOpportunity API')
+@ApiTags('EmploymentOpportunity API (지원공고/자소서)')
 @ApiInternalServerErrorResponse({
   description: '서버 오류',
 })
