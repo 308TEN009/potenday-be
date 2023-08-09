@@ -11,6 +11,7 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
@@ -33,6 +34,9 @@ import { RefreshAccessTokenDto } from './dtos/refresh-access-token.dto';
 })
 @ApiUnauthorizedResponse({
   description: '로그인 필요, 유효하지 않은 엑세스 토큰',
+})
+@ApiBadRequestResponse({
+  description: '잘못된 입력값, 타입 혹은 제약사항 오류',
 })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

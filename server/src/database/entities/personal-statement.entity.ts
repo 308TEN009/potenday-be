@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Length } from 'class-validator';
 import {
   Column,
   Entity,
@@ -50,6 +50,7 @@ export class PersonalStatement extends BaseEntity {
   })
   @IsString()
   @IsNotEmpty()
+  @Length(1, 700)
   answer!: string;
 
   @ApiProperty({

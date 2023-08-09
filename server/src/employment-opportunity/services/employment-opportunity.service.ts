@@ -1,11 +1,18 @@
-import { EmploymentOpportunity, EmploymentOpportunityStatus } from '@database';
-import { Injectable } from '@nestjs/common';
+import {
+  EmploymentOpportunity,
+  EmploymentOpportunityStatus,
+  EmploymentOpportunityStatusType,
+} from '@database';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import {
   InjectTransactionRepository,
   Transactional,
 } from 'typeorm-aop-transaction';
-import { EmploymentOpportunityStatisticDto } from '../dtos/employment-opportunity-statistic.dto';
+import {
+  CreateEmploymentOpportunityDto,
+  EmploymentOpportunityStatisticDto,
+} from '../dtos';
 import { EmploymentOpportunityService as IsEmploymentOpportunityService } from '../interfaces';
 
 @Injectable()
@@ -18,13 +25,57 @@ export class EmploymentOpportunityService
   ) {}
 
   @Transactional()
+  async createEmploymentOpportunity(
+    userId: string,
+    dto: CreateEmploymentOpportunityDto,
+  ): Promise<void> {
+    await this.eopRepository.insert(
+      this.eopRepository.create({
+        ...dto,
+        userId,
+        status: EmploymentOpportunityStatus.START,
+      }),
+    );
+  }
+
+  @Transactional()
+  async findOneById(eopId: string) {
+    const eop = await this.eopRepository.findOne({
+      where: {
+        _id: eopId,
+      },
+      relations: {
+        personalStatementList: true,
+      },
+    });
+
+    if (!eop) {
+      throw new NotFoundException('존재하지 않는 지원공고 단일조회 요청');
+    }
+
+    return eop;
+  }
+
+  @Transactional()
   findAllActiveEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]> {
+    /**
+     * 활성상태는 start, pending
+     */
     return this.eopRepository.find({
       where: {
         userId,
-        status: EmploymentOpportunityStatus.PENDING,
+        status: In([
+          EmploymentOpportunityStatus.PENDING,
+          EmploymentOpportunityStatus.START,
+        ]),
+      },
+      relations: {
+        personalStatementList: true,
+      },
+      order: {
+        createdAt: 'DESC',
       },
     });
   }
@@ -45,5 +96,21 @@ export class EmploymentOpportunityService
     ).length;
 
     return new EmploymentOpportunityStatisticDto(completeCnt, 0);
+  }
+
+  @Transactional()
+  async updateOpportunityStatus(
+    eopId: string,
+    targetStatus: EmploymentOpportunityStatusType,
+  ) {
+    const updateResult = await this.eopRepository.update(eopId, {
+      status: targetStatus,
+    });
+
+    if (!updateResult?.affected) {
+      throw new NotFoundException('존재하지 않는 지원공고 수정요청');
+    }
+
+    return updateResult;
   }
 }
