@@ -1,0 +1,4 @@
+export const ExperienceInjector = {
+  EXPERIENCE_SERVICE: Symbol('EXPERIENCE_SERVICE'),
+  EXPERIENCE_DETAIL_SERVICE: Symbol('EXPERIENCE_DETAIL_SERVICE'),
+} as const;

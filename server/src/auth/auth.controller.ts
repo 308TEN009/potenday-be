@@ -15,9 +15,11 @@ import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
+  PickType,
 } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 import { AuthName, CustomHttpStatus } from '@common';
@@ -26,6 +28,7 @@ import { KakaoAuthGuard, NaverAuthGuard, JwtAuthGuard } from './guards';
 import { RedirectInterceptor } from './interceptors';
 import { SocialLoginResonse, UserJWTPayload } from './interfaces';
 import { RefreshAccessTokenDto } from './dtos/refresh-access-token.dto';
+import { SignInResponseDto } from './dtos';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -117,6 +120,10 @@ export class AuthController {
   @Post('token')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: '재발급된 엑세스토큰과 리프레시토큰을 포함하는 객체',
+    type: PickType(SignInResponseDto, ['accessToken', 'refreshToken']),
+  })
   refreshAccessToken(
     @User() user: UserJWTPayload,
     @Body() dto: RefreshAccessTokenDto,

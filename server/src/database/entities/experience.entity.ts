@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import {
   Column,
   Entity,
@@ -38,7 +38,7 @@ export class Experience extends BaseEntity {
     type: 'varchar',
     length: 255,
   })
-  @IsDate()
+  @IsString()
   title!: string;
 
   @ApiProperty({
@@ -66,6 +66,8 @@ export class Experience extends BaseEntity {
   })
   user!: User;
 
-  @OneToMany(() => ExperienceDetail, (expDetail) => expDetail.experience)
+  @OneToMany(() => ExperienceDetail, (expDetail) => expDetail.experience, {
+    cascade: ['insert'],
+  })
   experienceDetailList!: ExperienceDetail[];
 }
