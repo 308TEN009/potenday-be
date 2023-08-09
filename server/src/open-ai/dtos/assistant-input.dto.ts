@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsIn, IsString } from 'class-validator';
+import { AIMessageInput, AIMessageInputType } from '../common';
 
 export class AssistantInputDto {
   @ApiProperty({
     description: '질문전 Assistant 를 설정할 타입',
-    example: 'experience',
+    enum: AIMessageInput,
+    enumName: 'AI 자소서 Assistant 설정 타입',
   })
-  @IsString()
-  type!: 'experience' | 'employment-opportunity';
+  @IsIn(Object.values(AIMessageInput))
+  type!: AIMessageInputType;
 
   @ApiProperty({
     description: `
@@ -16,5 +18,6 @@ export class AssistantInputDto {
  - 지원공고 기업명 + 지원직무
     `,
   })
+  @IsString()
   message!: string;
 }

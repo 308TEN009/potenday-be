@@ -5,12 +5,17 @@ import { OpenAIInjector } from './common';
 import { ConfigService } from '@nestjs/config';
 import { IsOpenAIConfig } from '@config';
 import { Configuration, OpenAIApi } from 'openai';
+import { MessageFactory } from './services/message.factory';
 
 @Module({
   providers: [
     {
       provide: OpenAIInjector.OPEN_AI_SERVICE,
       useClass: OpenAiService,
+    },
+    {
+      provide: OpenAIInjector.MESSAGE_FACTORY,
+      useClass: MessageFactory,
     },
     {
       provide: OpenAIInjector.CHAT_GPT_API,
