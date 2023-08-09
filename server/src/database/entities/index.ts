@@ -10,3 +10,5 @@ export * from './personal-statement.entity';
 
 export * from './experience-detail.entity';
 export * from './experience.entity';
+
+export * from './news.entity';

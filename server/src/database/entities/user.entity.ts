@@ -6,6 +6,7 @@ import { BaseEntity } from './base.entity';
 import { BookmarkSite } from './bookmark-site.entity';
 import { EmploymentOpportunity } from './employment-opportunity.entity';
 import { Experience } from './experience.entity';
+import { News } from './news.entity';
 import { RefreshToken } from './refresh-token.entity';
 import { SocialAccount } from './social-account.entity';
 
@@ -94,6 +95,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => EmploymentOpportunity, (emp) => emp.user)
   employmentOpportunityList!: EmploymentOpportunity[];
+
+  @OneToMany(() => News, (emp) => emp.user)
+  newsList!: News[];
 
   constructor(data: User) {
     super();
