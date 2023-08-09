@@ -1,1 +1,1 @@
-export * from './chat-gpt-api.interface';
+export * from './open-ai.service.interface';

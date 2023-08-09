@@ -4,29 +4,26 @@ import { OpenAiController } from './open-ai.controller';
 import { OpenAIInjector } from './common';
 import { ConfigService } from '@nestjs/config';
 import { IsOpenAIConfig } from '@config';
+import { Configuration, OpenAIApi } from 'openai';
 
 @Module({
   providers: [
-    OpenAiService,
+    {
+      provide: OpenAIInjector.OPEN_AI_SERVICE,
+      useClass: OpenAiService,
+    },
     {
       provide: OpenAIInjector.CHAT_GPT_API,
       useFactory: async (
         configService: ConfigService<IsOpenAIConfig, true>,
       ) => {
-        /**
-         * @NOTE ES5 chatgpt 오류 해결을 위함
-         */
-        const importDynamic = new Function(
-          'modulePath',
-          'return import(modulePath)',
-        );
-        const { ChatGPTAPI } = await importDynamic('chatgpt');
-
-        const api = new ChatGPTAPI({
+        const configiration = new Configuration({
           apiKey: configService.get('openAiApiKey'),
         });
 
-        return api;
+        const openai = new OpenAIApi(configiration);
+
+        return openai;
       },
       inject: [ConfigService],
     },

@@ -1,18 +1,19 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { OpenAIInjector } from './common';
-import { ChatGPTAPI } from './interfaces/chat-gpt-api.interface';
+import { CreateAIPersonalStatementDto } from './dtos';
+import { OpenAIService } from './interfaces';
 
 @Controller('open-ai')
 @ApiTags('OpenAI API')
 export class OpenAiController {
   constructor(
-    @Inject(OpenAIInjector.CHAT_GPT_API)
-    private readonly chatGPTApi: ChatGPTAPI,
+    @Inject(OpenAIInjector.OPEN_AI_SERVICE)
+    private readonly openAIservice: OpenAIService,
   ) {}
 
-  @Get()
-  async test() {
-    console.log(this.chatGPTApi);
+  @Post()
+  async createAIPersonalStatement(@Body() dto: CreateAIPersonalStatementDto) {
+    return this.openAIservice.createPersonalStatement(dto);
   }
 }
