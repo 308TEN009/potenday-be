@@ -16,6 +16,7 @@ export type SocialProviderType =
 export const SocialProviderTypeValue = {
   KAKAO: 'kakao',
   NAVER: 'naver',
+  FACEBOOK: 'facebook',
 } as const;
 
 @Entity('social_account')

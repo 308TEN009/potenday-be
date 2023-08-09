@@ -1,4 +1,5 @@
 import { Profile as _NaverProfile } from 'passport-naver-v2';
+import { Profile as _FacebookProfile } from 'passport-facebook';
 
 export interface KakaoProfile {
   id: number;
@@ -19,4 +20,10 @@ export interface NaverProfile extends _NaverProfile {
   name: string;
   email: string;
   mobile: string;
+}
+
+export interface FacebookProfile extends _FacebookProfile {
+  email: string;
+
+  username: string;
 }

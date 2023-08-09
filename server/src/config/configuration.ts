@@ -1,6 +1,7 @@
 import * as Joi from 'joi';
 import {
   IsAuthenticationConfig,
+  IsFacebookAuthenticationConfig,
   IsKakaoAuthenticationConfig,
   IsMailConfig,
   IsNaverAuthenticationConfig,
@@ -17,6 +18,7 @@ type ConfigSchema = IsPostgresDatabaseConfig &
   IsRedisConfig &
   IsAuthenticationConfig &
   IsKakaoAuthenticationConfig &
+  IsFacebookAuthenticationConfig &
   IsMailConfig &
   IsNaverAuthenticationConfig &
   IsOpenAIConfig;
@@ -48,6 +50,10 @@ export default () => {
     naverClientId: Joi.string().required(),
     naverCallbackUrl: Joi.string().required(),
     naverClientSecret: Joi.string().required(),
+
+    facebookClientId: Joi.string().required(),
+    facebookCallbackUrl: Joi.string().required(),
+    facebookClientSecret: Joi.string().required(),
 
     mailHost: Joi.string().required(),
     mailPort: Joi.number().required(),
@@ -81,6 +87,10 @@ export default () => {
     naverClientId: process.env.NAVER_CLIENT_ID,
     naverCallbackUrl: process.env.NAVER_CALLBACK_URL,
     naverClientSecret: process.env.NAVER_CLIENT_SECRET,
+
+    facebookClientId: process.env.FACEBOOK_CLIENT_ID,
+    facebookClientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
 
     mailHost: process.env.NAVER_MAIL_HOST,
     mailPort: process.env.NAVER_MAIL_PORT,
