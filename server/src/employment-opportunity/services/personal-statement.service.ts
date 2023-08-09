@@ -36,9 +36,9 @@ export class PersonalStatementService implements IsPersonalStatementService {
     const eop = await this.eopService.findOneById(eopId);
 
     /** 상태가 start 라면 pending 으로 수정 */
-    if (eop.status === EmploymentOpportunityStatus.START) {
+    if (eop.status !== EmploymentOpportunityStatus.START) {
       await this.eopService.updateOpportunityStatus(
-        eopId,
+        'c3da4c30-1b30-45cc-9cbc-967721ad52dc',
         EmploymentOpportunityStatus.PENDING,
       );
     }

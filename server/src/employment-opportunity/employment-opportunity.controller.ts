@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
+  InternalServerErrorException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -104,10 +105,31 @@ export class EmploymentOpportunityController {
   @Post(':eopId/personal-statement')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
-  createPesonalStatement(
+  async createPesonalStatement(
     @Param('eopId', ParseUUIDPipe) eopId: string,
     @Body() dto: CreatePersonalStatementDto,
   ) {
-    return this.psService.createPersonalStatement(eopId, dto);
+    try {
+      await this.psService.createPersonalStatement(eopId, dto);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new InternalServerErrorException(e.message, { cause: e });
+      }
+      throw e;
+    }
+  }
+
+  @ApiOperation({
+    summary: '지원공고의 모든 자소서 목록 조회',
+    description: `
+  - 특정 지원공고의 모든 자소서를 조회합니다.
+    `,
+  })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @Get(':eopId/personal-statement/list')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  findAllPersonalStatementInEOP(@Param('eopId', ParseUUIDPipe) eopId: string) {
+    return this.psService.findAllPersonalStatementInEOP(eopId);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
+import { HttpStatusCode } from 'axios';
 import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
@@ -11,9 +12,15 @@ export class LoggerMiddleware implements NestMiddleware {
     res.on('finish', () => {
       const { statusCode } = res;
 
-      this.logger.log(
-        `${method} ${statusCode} - ${originalUrl} - ${ip} - ${userAgent}`,
-      );
+      if (statusCode <= HttpStatusCode.PermanentRedirect) {
+        this.logger.log(
+          `${method} ${statusCode} - ${originalUrl} - ${ip} - ${userAgent}`,
+        );
+      } else {
+        this.logger.error(
+          `${method} ${statusCode} - ${originalUrl} - ${ip} - ${userAgent}`,
+        );
+      }
     });
     next();
   }
