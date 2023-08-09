@@ -24,6 +24,7 @@ import { HealthCheckModule } from './health-check';
 import { EmploymentOpportunityModule } from './employment-opportunity';
 import { ExperienceModule } from './experience';
 import { BookmarkSiteModule } from './bookmark-site';
+import { OpenAiModule } from './open-ai';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { BookmarkSiteModule } from './bookmark-site';
     EmploymentOpportunityModule,
     ExperienceModule,
     BookmarkSiteModule,
+    OpenAiModule,
   ],
   providers: [
     {
