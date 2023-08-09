@@ -1,24 +1,57 @@
 import { AuthName } from '@common';
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Inject,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiBearerAuth,
+  ApiTags,
+  ApiInternalServerErrorResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { JwtAuthGuard, User, UserJWTPayload } from 'src/auth';
 import { EmploymentOpportunityInjector } from './common';
+import { CreateEmploymentOpportunityDto } from './dtos/create-employment-opportunity.dto';
 import { EmploymentOpportunityService } from './interfaces';
 
 @Controller('employment-opportunity')
 @ApiTags('EmploymentOpportunity API')
+@ApiInternalServerErrorResponse({
+  description: '서버 오류',
+})
+@ApiUnauthorizedResponse({
+  description: '로그인 필요, 유효하지 않은 엑세스 토큰',
+})
 export class EmploymentOpportunityController {
   constructor(
     @Inject(EmploymentOpportunityInjector.EMPLOYMENT_OPPORTUNITY_SERVICE)
     private readonly eopService: EmploymentOpportunityService,
   ) {}
+
+  @ApiOperation({
+    summary: '지원공고 생성',
+    description: `
+  - 특정 기업에 대한 지원공고를 생성합니다.
+  - 지원공고를 생성하면 자동으로 상태가 start로 초기화됩니다.
+    `,
+  })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard)
+  createEmploymentOpportunity(
+    @User() user: UserJWTPayload,
+    @Body() dto: CreateEmploymentOpportunityDto,
+  ) {
+    return this.eopService.createEmploymentOpportunity(user._id, dto);
+  }
 
   @ApiOperation({
     summary: '작성중인 지원공고 목록 조회',

@@ -5,6 +5,7 @@ import {
   InjectTransactionRepository,
   Transactional,
 } from 'typeorm-aop-transaction';
+import { CreateEmploymentOpportunityDto } from '../dtos/create-employment-opportunity.dto';
 import { EmploymentOpportunityStatisticDto } from '../dtos/employment-opportunity-statistic.dto';
 import { EmploymentOpportunityService as IsEmploymentOpportunityService } from '../interfaces';
 
@@ -18,13 +19,36 @@ export class EmploymentOpportunityService
   ) {}
 
   @Transactional()
+  async createEmploymentOpportunity(
+    userId: string,
+    dto: CreateEmploymentOpportunityDto,
+  ): Promise<void> {
+    await this.eopRepository.insert(
+      this.eopRepository.create({
+        ...dto,
+        userId,
+        status: EmploymentOpportunityStatus.START,
+      }),
+    );
+  }
+
+  @Transactional()
   findAllActiveEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]> {
+    /**
+     * 활성상태는 start, pending
+     */
     return this.eopRepository.find({
       where: {
         userId,
-        status: EmploymentOpportunityStatus.PENDING,
+        status: In([
+          EmploymentOpportunityStatus.PENDING,
+          EmploymentOpportunityStatus.START,
+        ]),
+      },
+      order: {
+        createdAt: 'DESC',
       },
     });
   }
