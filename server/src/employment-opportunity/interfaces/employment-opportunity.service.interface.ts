@@ -1,6 +1,12 @@
-import { EmploymentOpportunity } from '@database';
-import { CreateEmploymentOpportunityDto } from '../dtos/create-employment-opportunity.dto';
-import { EmploymentOpportunityStatisticDto } from '../dtos/employment-opportunity-statistic.dto';
+import {
+  EmploymentOpportunity,
+  EmploymentOpportunityStatusType,
+} from '@database';
+import { UpdateResult } from 'typeorm';
+import {
+  CreateEmploymentOpportunityDto,
+  EmploymentOpportunityStatisticDto,
+} from '../dtos';
 
 export interface EmploymentOpportunityService {
   /**
@@ -11,6 +17,14 @@ export interface EmploymentOpportunityService {
     userId: string,
     dto: CreateEmploymentOpportunityDto,
   ): Promise<void>;
+
+  /**
+   * 지원공고 단일 조회
+   * @param eopId 지원공고 PK
+   *
+   * @throws {NotFoundException} 존재하지 않는 지원공고 조회
+   */
+  findOneById(eopId: string): Promise<EmploymentOpportunity>;
 
   /**
    * 작성중인 모든 지원공고 조회
@@ -27,4 +41,16 @@ export interface EmploymentOpportunityService {
   findEmploymentOpportunityStatistic(
     userId: string,
   ): Promise<EmploymentOpportunityStatisticDto>;
+
+  /**
+   * 지원공고 상태 수정
+   * @param eopId 지원공고 PK
+   * @param status 변경할 상태
+   *
+   * @throws {NotFoundException} 존재하지 않는 지원공고 수정
+   */
+  updateOpportunityStatus(
+    eopId: string,
+    status: EmploymentOpportunityStatusType,
+  ): Promise<UpdateResult>;
 }
