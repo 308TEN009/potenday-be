@@ -12,6 +12,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -89,6 +90,10 @@ export class NewsController {
     @Param('newsId', ParseUUIDPipe) newsId: string,
     @Body() dto: UpdateNewsDto,
   ) {
+    if (Object.keys(dto).length < 1) {
+      throw new BadRequestException('빈 객체 수정 요청');
+    }
+
     return this.newsService.update(newsId, dto);
   }
 

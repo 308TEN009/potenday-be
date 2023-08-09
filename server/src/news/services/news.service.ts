@@ -1,26 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { CreateNewsDto } from '../dtos/create-news.dto';
-import { UpdateNewsDto } from '../dtos/update-news.dto';
+import { News } from '@database';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import {
+  InjectTransactionRepository,
+  Transactional,
+} from 'typeorm-aop-transaction';
+import { CreateNewsDto, UpdateNewsDto } from '../dtos';
+import { NewsService as IsNewsService } from '../interfaces';
 
 @Injectable()
-export class NewsService {
-  create(createNewsDto: CreateNewsDto) {
-    return 'This action adds a new news';
+export class NewsService implements IsNewsService {
+  constructor(
+    @InjectTransactionRepository(News)
+    private readonly newsRepository: Repository<News>,
+  ) {}
+
+  @Transactional()
+  async create(userId: string, dto: CreateNewsDto): Promise<void> {
+    await this.newsRepository.insert(
+      this.newsRepository.create({
+        userId,
+        title: dto.title,
+        content: dto.content,
+        url: dto.url,
+      }),
+    );
   }
 
-  findAll() {
-    return `This action returns all news`;
+  @Transactional()
+  async update(newsId: string, dto: UpdateNewsDto): Promise<void> {
+    const updateResult = await this.newsRepository.update(newsId, dto);
+
+    if (!updateResult?.affected) {
+      throw new NotFoundException('존재하지 않는 뉴스 스크랩 수정 요청');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} news`;
+  @Transactional()
+  findAllNewsList(userId: string): Promise<News[]> {
+    return this.newsRepository.find({
+      where: {
+        userId,
+      },
+    });
   }
 
-  update(id: number, updateNewsDto: UpdateNewsDto) {
-    return `This action updates a #${id} news`;
-  }
+  @Transactional()
+  async delete(newsId: string): Promise<void> {
+    const deleteResult = await this.newsRepository.softDelete(newsId);
 
-  remove(id: number) {
-    return `This action removes a #${id} news`;
+    if (!deleteResult?.affected) {
+      throw new NotFoundException('존재하지 않는 뉴스 스크랩 삭제 요청');
+    }
   }
 }

@@ -6,7 +6,7 @@ export interface NewsService {
 
   update(newsId: string, dto: UpdateNewsDto): Promise<void>;
 
-  findAllNewsList(userId: string): Promise<News>;
+  findAllNewsList(userId: string): Promise<News[]>;
 
   delete(newsId: string): Promise<void>;
 }
