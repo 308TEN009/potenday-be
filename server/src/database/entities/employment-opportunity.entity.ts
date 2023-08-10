@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { IsString, IsNotEmpty, IsIn, IsUUID } from 'class-validator';
 import {
   Column,
   Entity,
@@ -13,12 +13,24 @@ import { BaseEntity } from './base.entity';
 import { PersonalStatement } from './personal-statement.entity';
 import { User } from './user.entity';
 
+/** 지원공고 작성상태 타입 */
 export type EmploymentOpportunityStatusType =
   (typeof EmploymentOpportunityStatus)[keyof typeof EmploymentOpportunityStatus];
+/** 지원공고 작성상태 */
 export const EmploymentOpportunityStatus = {
   START: 'start',
   PENDING: 'pending',
   COMPLETE: 'complete',
+} as const;
+
+/** 지원공고 지원상태 타입 */
+export type EmploymentOpportunityApplyStatusType =
+  (typeof EmploymentOpportunityApplyStatus)[keyof typeof EmploymentOpportunityApplyStatus];
+/** 지원공고 지원상태 */
+export const EmploymentOpportunityApplyStatus = {
+  PASS: 'pass',
+  DRAFT: 'draft',
+  FAIL: 'fail',
 } as const;
 
 @Entity('employment_opportunity')
@@ -32,8 +44,7 @@ export class EmploymentOpportunity extends BaseEntity {
     name: 'id',
     primaryKeyConstraintName: 'employment_opportunity_pk_idx',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   _id!: string;
 
   @ApiProperty({
@@ -53,7 +64,7 @@ export class EmploymentOpportunity extends BaseEntity {
   @ApiProperty({
     description: '지원직무',
     type: String,
-    example: 'Nodejs 서버 개발자',
+    example: 'NodeJs 서버 개발자',
   })
   @Column({
     name: 'application_job',
@@ -65,8 +76,25 @@ export class EmploymentOpportunity extends BaseEntity {
   applicationJob!: string;
 
   @ApiProperty({
-    description: '지원한 채용 상태',
-    enumName: '지원상태',
+    description: '지원 직무 설명',
+    type: String,
+    example: `- 분산 DB를 활용한 고성능 데이터 처리를 위한 플랫폼 설계 및 구현 업무
+- 대용량 트랜잭션 처리를 위한 플랫폼 설계 및 구현 업무
+- 네이버페이 주문, 결제 서비스 개발 업무
+    `,
+  })
+  @Column({
+    name: 'job_description',
+    type: 'text',
+    nullable: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  jobDescription!: string | null;
+
+  @ApiProperty({
+    description: '작성중인 채용공고 상태',
+    enumName: '채용공고 상태',
     enum: EmploymentOpportunity,
   })
   @Column({
@@ -78,6 +106,21 @@ export class EmploymentOpportunity extends BaseEntity {
   status!: EmploymentOpportunityStatusType;
 
   @ApiProperty({
+    description: '지원한 채용공고 결과 상태',
+    enumName: '지원 결과 상태',
+    enum: EmploymentOpportunityApplyStatus,
+    default: EmploymentOpportunityApplyStatus.DRAFT,
+  })
+  @Column({
+    name: 'apply_status',
+    type: 'varchar',
+    length: 20,
+    default: EmploymentOpportunityApplyStatus.DRAFT, // 초기 상태는 draft
+  })
+  @IsIn(Object.values(EmploymentOpportunityApplyStatus))
+  applyStatus!: EmploymentOpportunityApplyStatusType;
+
+  @ApiProperty({
     description: '유저 Id',
     type: String,
     example: 'c3da4c30-1b30-45cc-9cbc-967721ad52dc',
@@ -87,8 +130,7 @@ export class EmploymentOpportunity extends BaseEntity {
     name: 'user_id',
     type: 'uuid',
   })
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   userId!: string;
 
   @ApiHideProperty()
