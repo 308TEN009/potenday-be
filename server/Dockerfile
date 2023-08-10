@@ -32,7 +32,7 @@ COPY --chown=node:node . .
 
 RUN yarn run build
 
-RUN yarn ci --production && yarn cache clean --force
+RUN yarn ci
 
 USER node
 
