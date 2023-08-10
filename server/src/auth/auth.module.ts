@@ -17,6 +17,10 @@ import { NaverAuthenticationStartegy } from './strategies/naver-authentication.s
 import { IsAuthenticationConfig } from '@config';
 import { RefreshToken } from '@database';
 import { BlackListService } from './services/black-list.service';
+import {
+  FacebookAuthenticationStartegy,
+  GoogleAuthenticationStartegy,
+} from './strategies';
 
 @Module({
   imports: [
@@ -63,6 +67,8 @@ import { BlackListService } from './services/black-list.service';
     RefreshJwtStrategy,
     KakaoAuthenticationStartegy,
     NaverAuthenticationStartegy,
+    FacebookAuthenticationStartegy,
+    GoogleAuthenticationStartegy,
     RedirectInterceptor,
   ],
 })

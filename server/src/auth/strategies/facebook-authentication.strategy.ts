@@ -1,48 +1,46 @@
-import { IsKakaoAuthenticationConfig } from '@config';
+import { IsFacebookAuthenticationConfig } from '@config';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-kakao';
 import {
   SocialPassportStrategy,
-  KakaoProfile,
   SocialLoginResonse,
+  FacebookProfile,
 } from '../interfaces';
+import { Strategy } from 'passport-facebook';
 
 @Injectable()
-export class KakaoAuthenticationStartegy
-  extends PassportStrategy(Strategy, 'kakao')
+export class FacebookAuthenticationStartegy
+  extends PassportStrategy(Strategy, 'facebook')
   implements SocialPassportStrategy
 {
   constructor(
     public readonly configService: ConfigService<
-      IsKakaoAuthenticationConfig,
+      IsFacebookAuthenticationConfig,
       true
     >,
   ) {
     super({
-      clientID: configService.get('kakaoClientId'),
-      clientSecret: '',
-      callbackURL: configService.get('kakaoCallbackUrl'),
-      scope: ['account_email'],
+      clientID: configService.get('facebookClientId'),
+      clientSecret: configService.get('facebookClientSecret'),
+      callbackURL: configService.get('facebookCallbackUrl'),
+      scope: ['email'],
     });
   }
 
   async validate(
     accessToken: string,
     refreshToken: string,
-    payload: { _json: KakaoProfile },
+    profile: FacebookProfile,
   ): Promise<SocialLoginResonse | false> {
     try {
-      const kakaoProfile: KakaoProfile = payload._json;
-
       return {
-        id: kakaoProfile.id,
+        id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        email: kakaoProfile?.kakao_account?.email,
+        email: profile?.emails?.[0]?.value,
         phoneNumber: undefined,
-        type: 'kakao',
+        type: 'facebook',
       };
     } catch (e) {
       return false;

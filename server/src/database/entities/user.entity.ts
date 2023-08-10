@@ -33,11 +33,11 @@ export class User extends BaseEntity {
   @Column({
     name: 'user_id',
     type: 'varchar',
-    length: 30,
+    length: 120,
     unique: true,
   })
   @IsString()
-  @Length(5, 30)
+  @Length(5, 120)
   userId!: string;
 
   @ApiHideProperty()
@@ -58,10 +58,11 @@ export class User extends BaseEntity {
   @Column({
     type: 'varchar',
     length: 255,
+    nullable: true,
   })
   @IsString()
   @Length(5, 255)
-  email!: string;
+  email!: string | null;
 
   @ApiProperty({
     description: '국제번호를 포함하는 전화번호',
@@ -72,10 +73,11 @@ export class User extends BaseEntity {
     name: 'phone_number',
     type: 'varchar',
     length: 20,
+    nullable: true,
   })
   @IsString()
   @Length(5, 20)
-  phoneNumber!: string;
+  phoneNumber!: string | null;
 
   @OneToMany(() => SocialAccount, (socialAccount) => socialAccount.user, {
     cascade: ['insert'],

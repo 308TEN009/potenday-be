@@ -7,7 +7,7 @@ import {
   CreateUserDto,
 } from 'src/user';
 import { Transactional } from 'typeorm-aop-transaction';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, v4 } from 'uuid';
 import { AuthInjector } from '../common';
 import { SignInResponseDto, FindUserRefreshTokenDto } from '../dtos';
 import { InvalidRefreshTokenException } from '../errors';
@@ -43,55 +43,37 @@ export class AuthService {
         profile.type,
       );
 
-    const existUser = await this.userService.findDuplicateUser(profile.email);
-
-    if (!existUser && existSocialUser) {
-      throw new Error('처리 할 수 없는 유저 상태입니다.');
-    } else if (existUser && existSocialUser) {
+    if (existSocialUser) {
+      /**
+       * @NOTE 기존 유저 로그인 처리
+       */
+      const user = existSocialUser.user;
       const accessToken = this.accessTokenService.sign({
-        _id: existUser._id,
+        _id: user._id,
         role: 'admin',
         authType: existSocialUser.type,
       });
 
       // 유저 리프레시 토큰 추가 발급
-      const refreshToken = await this.refreshTokenService.sign(existUser._id);
+      const refreshToken = await this.refreshTokenService.sign(user._id);
 
-      await this.blackListService.deleteBlackList(existUser._id);
+      await this.blackListService.deleteBlackList(user._id);
 
-      return new SignInResponseDto(existUser, accessToken, refreshToken);
-    } else if (existUser && !existSocialUser) {
-      await this.socialAccountService.createSocialAccount(
-        existUser._id,
-        new CreateSocialAccountDto({
-          socialId: String(profile.id),
-          accessToken: profile.accessToken,
-          refreshToken: profile.refreshToken,
-          type: profile.type,
-        }),
-      );
-
-      const refreshToken = await this.refreshTokenService.sign(existUser._id);
-      const accessToken = this.accessTokenService.sign({
-        _id: existUser._id,
-        role: 'admin',
-        authType: profile.type,
-      });
-
-      await this.blackListService.deleteBlackList(existUser._id);
-
-      return new SignInResponseDto(existUser, accessToken, refreshToken);
+      return new SignInResponseDto(user, accessToken, refreshToken);
     } else {
+      /**
+       * @NOTE 최초 가입 유저 회원가입 처리
+       */
       const user = await this.userService.create(
         new CreateUserDto({
-          userId: profile.email,
-          email: profile.email,
-          phoneNumber: profile.phoneNumber,
+          userId: profile.email || v4(),
+          email: profile.email || null,
+          phoneNumber: profile.phoneNumber || null,
           password: uuidv4(),
           socialAccount: new CreateSocialAccountDto({
             socialId: String(profile.id),
             accessToken: profile.accessToken,
-            refreshToken: profile.refreshToken,
+            refreshToken: profile.refreshToken || null,
             type: profile.type,
           }),
         }),

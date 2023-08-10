@@ -1,4 +1,4 @@
-import { IsIn, IsString, Length } from 'class-validator';
+import { IsIn, IsString, IsUUID, Length } from 'class-validator';
 import {
   Column,
   Entity,
@@ -16,6 +16,8 @@ export type SocialProviderType =
 export const SocialProviderTypeValue = {
   KAKAO: 'kakao',
   NAVER: 'naver',
+  FACEBOOK: 'facebook',
+  GOOGLE: 'google',
 } as const;
 
 @Entity('social_account')
@@ -30,8 +32,7 @@ export class SocialAccount extends BaseEntity {
     name: 'id',
     primaryKeyConstraintName: 'social_account_pk_idx',
   })
-  @IsString()
-  @Length(1)
+  @IsUUID()
   _id!: string;
 
   @ApiProperty({
@@ -87,7 +88,7 @@ export class SocialAccount extends BaseEntity {
   })
   @IsString()
   @Length(1)
-  refreshToken!: string;
+  refreshToken!: string | null;
 
   @ApiProperty({
     description: '유저 Id',

@@ -1,6 +1,7 @@
 import * as Joi from 'joi';
 import {
   IsAuthenticationConfig,
+  IsFacebookAuthenticationConfig,
   IsKakaoAuthenticationConfig,
   IsMailConfig,
   IsNaverAuthenticationConfig,
@@ -8,6 +9,7 @@ import {
   IsPostgresDatabaseConfig,
   IsRedisConfig,
 } from './interfaces';
+import { IsGoogleAuthenticationConfig } from './interfaces/google-authentication.config.interface';
 
 /**
  * If additional environment variables are required,
@@ -17,6 +19,8 @@ type ConfigSchema = IsPostgresDatabaseConfig &
   IsRedisConfig &
   IsAuthenticationConfig &
   IsKakaoAuthenticationConfig &
+  IsFacebookAuthenticationConfig &
+  IsGoogleAuthenticationConfig &
   IsMailConfig &
   IsNaverAuthenticationConfig &
   IsOpenAIConfig;
@@ -48,6 +52,14 @@ export default () => {
     naverClientId: Joi.string().required(),
     naverCallbackUrl: Joi.string().required(),
     naverClientSecret: Joi.string().required(),
+
+    googleClientId: Joi.string().required(),
+    googleCallbackUrl: Joi.string().required(),
+    googleClientSecret: Joi.string().required(),
+
+    facebookClientId: Joi.string().required(),
+    facebookCallbackUrl: Joi.string().required(),
+    facebookClientSecret: Joi.string().required(),
 
     mailHost: Joi.string().required(),
     mailPort: Joi.number().required(),
@@ -81,6 +93,14 @@ export default () => {
     naverClientId: process.env.NAVER_CLIENT_ID,
     naverCallbackUrl: process.env.NAVER_CALLBACK_URL,
     naverClientSecret: process.env.NAVER_CLIENT_SECRET,
+
+    facebookClientId: process.env.FACEBOOK_CLIENT_ID,
+    facebookClientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+    facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+
+    googleClientId: process.env.GOOGLE_CLIENT_ID,
+    googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
+    googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
 
     mailHost: process.env.NAVER_MAIL_HOST,
     mailPort: process.env.NAVER_MAIL_PORT,

@@ -47,8 +47,6 @@ export class RefreshJwtStrategy extends PassportStrategy(
       return null;
     }
 
-    console.log(req.headers);
-
     return {
       ...accessTokenPayload,
       refreshToken,

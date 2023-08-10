@@ -37,9 +37,8 @@ export class NaverAuthenticationStartegy
         id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: profile.name,
         email: profile.email,
-        phoneNumber: profile.mobile,
+        phoneNumber: undefined,
         type: 'naver',
       };
     } catch (e) {
