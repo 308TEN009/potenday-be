@@ -14,7 +14,7 @@ files:
   - source: nginx/nginx.prod.v1.conf
     destination: /home/ec2-user/app/nginx
     overwrite: yes
-  - source: nginx/nginx.staging.v1.conf
+  - source: nginx/nginx.staging.conf
     destination: /home/ec2-user/app/nginx
     overwrite: yes
 file_exists_behavior: OVERWRITE
