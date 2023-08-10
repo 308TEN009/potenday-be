@@ -90,6 +90,7 @@ export class EmploymentOpportunityController {
     summary: '지원공고 현황 조회',
     description: `
   - 작성완료, 서류합격 상태의 지원공고 현황을 조회해 반환합니다.
+  - 서류합격한 상태의 지원공고는 작성완료된 지원공고의 부분집합이므로, 서류합격한 상태의 지원공고 수는 작성완료된 지원공고 수보다 작거나 같습니다.
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)

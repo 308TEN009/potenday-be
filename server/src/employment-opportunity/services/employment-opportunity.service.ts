@@ -1,4 +1,8 @@
-import { EmploymentOpportunity, EmploymentOpportunityStatus } from '@database';
+import {
+  EmploymentOpportunity,
+  EmploymentOpportunityApplyStatus,
+  EmploymentOpportunityStatus,
+} from '@database';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import {
@@ -31,7 +35,8 @@ export class EmploymentOpportunityService
         companyName: dto.companyName,
         applicationJob: dto.applicationJob,
         jobDescription: dto.jobDescription,
-        status: EmploymentOpportunityStatus.PENDING,
+        status: EmploymentOpportunityStatus.PENDING, // default status is Pending
+        applyStatus: EmploymentOpportunityApplyStatus.DRAFT, // default status is Draft
         userId,
       }),
     );
@@ -91,14 +96,21 @@ export class EmploymentOpportunityService
     const eopList = await this.eopRepository.find({
       where: {
         userId,
+        // 작성완료된 지원공고만 서류합격일 수 있음
         status: In([EmploymentOpportunityStatus.COMPLETE]),
       },
     });
 
+    // 지원완료된 지원공고
     const completeCnt = eopList.filter(
       (eop) => eop.status === EmploymentOpportunityStatus.COMPLETE,
     ).length;
 
-    return new EmploymentOpportunityStatisticDto(completeCnt, 0);
+    // 서류합격된 지원공고
+    const passCnt = eopList.filter(
+      (eop) => eop.applyStatus === EmploymentOpportunityApplyStatus.PASS,
+    ).length;
+
+    return new EmploymentOpportunityStatisticDto(completeCnt, passCnt);
   }
 }
