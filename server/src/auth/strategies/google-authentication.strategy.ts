@@ -38,9 +38,8 @@ export class GoogleAuthenticationStartegy
         id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: profile._json.name || '이름없음',
-        email: profile.emails?.[0].value || '',
-        phoneNumber: '010-0000-0000',
+        email: profile.emails?.[0].value,
+        phoneNumber: undefined,
         type: 'google',
       };
     } catch (e) {

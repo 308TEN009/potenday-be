@@ -40,9 +40,8 @@ export class KakaoAuthenticationStartegy
         id: kakaoProfile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: '이름 없음',
-        email: kakaoProfile.kakao_account.email,
-        phoneNumber: '010-0000-0000',
+        email: kakaoProfile?.kakao_account?.email,
+        phoneNumber: undefined,
         type: 'kakao',
       };
     } catch (e) {

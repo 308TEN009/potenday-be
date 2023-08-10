@@ -33,11 +33,11 @@ export class User extends BaseEntity {
   @Column({
     name: 'user_id',
     type: 'varchar',
-    length: 30,
+    length: 120,
     unique: true,
   })
   @IsString()
-  @Length(5, 30)
+  @Length(5, 120)
   userId!: string;
 
   @ApiHideProperty()

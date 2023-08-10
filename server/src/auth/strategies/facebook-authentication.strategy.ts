@@ -38,9 +38,8 @@ export class FacebookAuthenticationStartegy
         id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: profile.username || '이름없음',
-        email: profile.email,
-        phoneNumber: '010-0000-0000',
+        email: profile?.emails?.[0]?.value,
+        phoneNumber: undefined,
         type: 'facebook',
       };
     } catch (e) {

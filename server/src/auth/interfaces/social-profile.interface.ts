@@ -1,9 +1,10 @@
 import { Profile as _NaverProfile } from 'passport-naver-v2';
 import { Profile as _FacebookProfile } from 'passport-facebook';
 import { Profile as _GoogleProfile } from 'passport-google-oauth20';
+import { Profile as _KakaoProfile } from 'passport-kakao';
 
-export interface KakaoProfile {
-  id: number;
+export interface KakaoProfile extends _KakaoProfile {
+  id: string;
   connected_at: string;
   kakao_account: {
     profile_nickname_needs_agreement: boolean;
@@ -17,16 +18,8 @@ export interface KakaoProfile {
   };
 }
 
-export interface NaverProfile extends _NaverProfile {
-  name: string;
-  email: string;
-  mobile: string;
-}
+export interface NaverProfile extends _NaverProfile {}
 
-export interface FacebookProfile extends _FacebookProfile {
-  email: string;
-
-  username: string;
-}
+export interface FacebookProfile extends _FacebookProfile {}
 
 export interface GoogleProfile extends _GoogleProfile {}
