@@ -9,6 +9,7 @@ import {
   InternalServerErrorException,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -19,10 +20,14 @@ import {
   ApiInternalServerErrorResponse,
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, User, UserJWTPayload } from 'src/auth';
 import { EmploymentOpportunityInjector } from './common';
-import { CreateEmploymentOpportunityDto } from './dtos/create-employment-opportunity.dto';
+import {
+  UpdateEmploymentOpportunityDto,
+  CreateEmploymentOpportunityDto,
+} from './dtos';
 import { CreatePersonalStatementDto } from './dtos/create-personal-statemnet.dto';
 import {
   EmploymentOpportunityService,
@@ -52,7 +57,8 @@ export class EmploymentOpportunityController {
     summary: '지원공고 생성',
     description: `
   - 특정 기업에 대한 지원공고를 생성합니다.
-  - 지원공고를 생성하면 **자동으로 상태가 start로 초기화**됩니다.
+  - 지원공고를 생성하면 자동으로 **작성 상태가 pending**로 초기화됩니다.
+  - 지원공고를 생성하면 자동으로 **지원결과 상태가 draft**로 초기화됩니다.
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
@@ -67,9 +73,9 @@ export class EmploymentOpportunityController {
   }
 
   @ApiOperation({
-    summary: '작성중인 지원공고 목록 조회',
+    summary: '지원공고 목록 조회',
     description: `
-  - 지원공고 상태가 pending 인 유저의 모든 지원 공고를 조회합니다. 
+  - 모든 지원공고 목록 조회
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
@@ -83,7 +89,7 @@ export class EmploymentOpportunityController {
   @ApiOperation({
     summary: '지원공고 현황 조회',
     description: `
-  - 지원완료, 서류합격 상태의 지원공고 현황을 조회해 반환합니다.
+  - 작성완료, 서류합격 상태의 지원공고 현황을 조회해 반환합니다.
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
@@ -95,10 +101,30 @@ export class EmploymentOpportunityController {
   }
 
   @ApiOperation({
+    summary: '지원공고 수정',
+    description: `
+  - 특정 지원공고 정보를 수정합니다.
+  `,
+  })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @Patch(':eopId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiNotFoundResponse({
+    description: '존재하지 않는 지원공고 수정 요청',
+  })
+  async updateEmploymentOpportunity(
+    @Param('eopId', ParseUUIDPipe) eopId: string,
+    @Body() dto: UpdateEmploymentOpportunityDto,
+  ) {
+    return this.eopService.updateEmploymentOpportunity(eopId, dto);
+  }
+
+  @ApiOperation({
     summary: '자소서 추가',
     description: `
   - 특정 지원공고에 작성한 자소서를 추가합니다.
-  - 자소서를 추가하면 **자동으로 상태가 pending 으로 초기화**됩니다.
+  - 자소서를 추가하면 자동으로 **작성상태가 pending** 으로 초기화됩니다.
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)

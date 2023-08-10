@@ -95,7 +95,7 @@ export class EmploymentOpportunity extends BaseEntity {
   @ApiProperty({
     description: '작성중인 채용공고 상태',
     enumName: '채용공고 상태',
-    enum: EmploymentOpportunity,
+    enum: EmploymentOpportunityStatus,
   })
   @Column({
     name: 'status',

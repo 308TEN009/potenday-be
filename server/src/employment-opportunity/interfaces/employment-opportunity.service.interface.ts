@@ -6,6 +6,7 @@ import { UpdateResult } from 'typeorm';
 import {
   CreateEmploymentOpportunityDto,
   EmploymentOpportunityStatisticDto,
+  UpdateEmploymentOpportunityDto,
 } from '../dtos';
 
 export interface EmploymentOpportunityService {
@@ -16,6 +17,18 @@ export interface EmploymentOpportunityService {
   createEmploymentOpportunity(
     userId: string,
     dto: CreateEmploymentOpportunityDto,
+  ): Promise<void>;
+
+  /**
+   * 지원공고 수정
+   * @param eopId 지원공고 PK
+   * @param dto UpdateEmploymentOpportunityDto
+   *
+   * @throws {NotFoundException} 존재하지 않는 지원공고 수정요청
+   */
+  updateEmploymentOpportunity(
+    eopId: string,
+    dto: UpdateEmploymentOpportunityDto,
   ): Promise<void>;
 
   /**

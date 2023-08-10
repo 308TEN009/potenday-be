@@ -12,6 +12,7 @@ import {
 import {
   CreateEmploymentOpportunityDto,
   EmploymentOpportunityStatisticDto,
+  UpdateEmploymentOpportunityDto,
 } from '../dtos';
 import { EmploymentOpportunityService as IsEmploymentOpportunityService } from '../interfaces';
 
@@ -36,6 +37,18 @@ export class EmploymentOpportunityService
         status: EmploymentOpportunityStatus.START,
       }),
     );
+  }
+
+  @Transactional()
+  async updateEmploymentOpportunity(
+    eopId: string,
+    dto: UpdateEmploymentOpportunityDto,
+  ): Promise<void> {
+    const updateResult = await this.eopRepository.update(eopId, dto);
+
+    if (!updateResult?.affected) {
+      throw new NotFoundException('존재하지 않는 지원공고 수정 요청');
+    }
   }
 
   @Transactional()
