@@ -32,7 +32,7 @@ export class OpenAiService implements OpenAIService {
       model: 'gpt-3.5-turbo',
       temperature: 0.8,
       top_p: 1,
-      max_tokens: 200,
+      max_tokens: 700,
       frequency_penalty: 0,
       presence_penalty: 0,
       stream: false,
