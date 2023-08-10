@@ -1,4 +1,3 @@
-import { IsFacebookAuthenticationConfig } from '@config';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
@@ -8,7 +7,6 @@ import {
   GoogleProfile,
 } from '../interfaces';
 import { Strategy } from 'passport-google-oauth20';
-import { v4 } from 'uuid';
 import { IsGoogleAuthenticationConfig } from 'src/config/interfaces/google-authentication.config.interface';
 
 @Injectable()
