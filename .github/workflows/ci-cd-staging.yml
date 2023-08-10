@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI/CD-staging
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir ./server/envs/
           cd ./server/envs/
-          touch ./.env.production
+          touch ./.env.test
           echo "${{secrets.STAGING_ENV}}" > ./.env.test
         shell: bash
 
