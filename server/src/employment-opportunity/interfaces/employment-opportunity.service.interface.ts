@@ -10,11 +10,13 @@ export interface EmploymentOpportunityService {
    * 지원공고 생성
    * @param dto CreateEmploymentOpportunityDto
    * @description 지원공고가 생성되면 상태를 Pending(작성중)으로 초기화한다.
+   *
+   * @returns 생성된 지원공고 PK
    */
   createEmploymentOpportunity(
     userId: string,
     dto: CreateEmploymentOpportunityDto,
-  ): Promise<void>;
+  ): Promise<string>;
 
   /**
    * 지원공고 수정
@@ -51,4 +53,13 @@ export interface EmploymentOpportunityService {
   findEmploymentOpportunityStatistic(
     userId: string,
   ): Promise<EmploymentOpportunityStatisticDto>;
+
+  /**
+   * 지원공고 삭제
+   * @param eopId 지원공고 PK
+   * @NOTE typeorm-aop-transaction 라이브러리의 버그로 인해 다른 @Transcationl 메서드와 함께 사용 불가능. 2023-08-11
+   *
+   * @throws {NotFoundException} 존재하지 않는 지원공고 삭제 요청
+   */
+  delete(eopId: string): Promise<void>;
 }

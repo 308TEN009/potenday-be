@@ -3,8 +3,12 @@ import {
   EmploymentOpportunityApplyStatus,
   EmploymentOpportunityStatus,
 } from '@database';
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { QueueName } from '@queue';
+import { Queue } from 'bull';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   InjectTransactionRepository,
   Transactional,
@@ -14,7 +18,12 @@ import {
   EmploymentOpportunityStatisticDto,
   UpdateEmploymentOpportunityDto,
 } from '../dtos';
-import { EmploymentOpportunityService as IsEmploymentOpportunityService } from '../interfaces';
+import {
+  AutoDeleteEmploymentOpportunityDelay,
+  AutoDeleteEmploymentOpportunityJob,
+  AutoDeleteEmploymentOpportunityJobName,
+  EmploymentOpportunityService as IsEmploymentOpportunityService,
+} from '../interfaces';
 
 @Injectable()
 export class EmploymentOpportunityService
@@ -23,14 +32,18 @@ export class EmploymentOpportunityService
   constructor(
     @InjectTransactionRepository(EmploymentOpportunity)
     private readonly eopRepository: Repository<EmploymentOpportunity>,
+    @InjectQueue(QueueName.BASIC_QUEUE)
+    private readonly queue: Queue<AutoDeleteEmploymentOpportunityJob>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
   ) {}
 
   @Transactional()
   async createEmploymentOpportunity(
     userId: string,
     dto: CreateEmploymentOpportunityDto,
-  ): Promise<void> {
-    await this.eopRepository.insert(
+  ): Promise<string> {
+    const insertResult = await this.eopRepository.insert(
       this.eopRepository.create({
         companyName: dto.companyName,
         applicationJob: dto.applicationJob,
@@ -40,6 +53,19 @@ export class EmploymentOpportunityService
         userId,
       }),
     );
+
+    const eopId = insertResult.identifiers[0]._id;
+    await this.queue.add(
+      AutoDeleteEmploymentOpportunityJobName,
+      {
+        eopId: eopId,
+      },
+      {
+        delay: AutoDeleteEmploymentOpportunityDelay,
+      },
+    );
+
+    return eopId;
   }
 
   @Transactional()
@@ -114,6 +140,14 @@ export class EmploymentOpportunityService
     return new EmploymentOpportunityStatisticDto(completeCnt, passCnt);
   }
 
-  @Transactional()
-  async delete(eopId: string) {}
+  async delete(eopId: string) {
+    const deleteResult = await this.entityManager.softDelete(
+      EmploymentOpportunity,
+      eopId,
+    );
+
+    if (!deleteResult?.affected) {
+      throw new NotFoundException('존재하지 않는 지원공고 삭제 요청');
+    }
+  }
 }

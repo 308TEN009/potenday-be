@@ -21,6 +21,7 @@ import {
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, User, UserJWTPayload } from 'src/auth';
 import { EmploymentOpportunityInjector } from './common';
@@ -59,12 +60,18 @@ export class EmploymentOpportunityController {
   - 특정 기업에 대한 지원공고를 생성합니다.
   - 지원공고를 생성하면 자동으로 **작성 상태가 pending**로 초기화됩니다.
   - 지원공고를 생성하면 자동으로 **지원결과 상태가 draft**로 초기화됩니다.
+  - 지원공고는 생성시각으로부터 6개월 뒤 자동 삭제됩니다.
     `,
   })
   @ApiBearerAuth(AuthName.ACCESS_TOKEN)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: String,
+    description: '생성된 지원공고 ID',
+  })
   createEmploymentOpportunity(
     @User() user: UserJWTPayload,
     @Body() dto: CreateEmploymentOpportunityDto,

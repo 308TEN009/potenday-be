@@ -2,6 +2,7 @@ import { IsRedisConfig } from '@config';
 import { BullModule } from '@nestjs/bull';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { QueueName } from './common';
 
 /**
  * BullQueueModule
@@ -35,9 +36,9 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService<IsRedisConfig, true>],
     }),
 
-    // setup Test Queue
+    // setup BASIC_QUEUE Queue
     BullModule.registerQueue({
-      name: 'Test',
+      name: QueueName.BASIC_QUEUE,
     }),
   ],
   exports: [BullModule],
