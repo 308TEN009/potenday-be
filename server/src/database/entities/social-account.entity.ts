@@ -1,4 +1,4 @@
-import { IsIn, IsString, Length } from 'class-validator';
+import { IsIn, IsString, IsUUID, Length } from 'class-validator';
 import {
   Column,
   Entity,
@@ -32,8 +32,7 @@ export class SocialAccount extends BaseEntity {
     name: 'id',
     primaryKeyConstraintName: 'social_account_pk_idx',
   })
-  @IsString()
-  @Length(1)
+  @IsUUID()
   _id!: string;
 
   @ApiProperty({

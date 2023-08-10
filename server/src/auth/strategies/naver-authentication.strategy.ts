@@ -37,7 +37,7 @@ export class NaverAuthenticationStartegy
         id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: profile.name,
+        name: profile.name || '이름없음',
         email: profile.email,
         phoneNumber: '010-0000-0000',
         type: 'naver',

@@ -9,6 +9,7 @@ import {
 } from '../interfaces';
 import { Strategy } from 'passport-google-oauth20';
 import { v4 } from 'uuid';
+import { IsGoogleAuthenticationConfig } from 'src/config/interfaces/google-authentication.config.interface';
 
 @Injectable()
 export class GoogleAuthenticationStartegy
@@ -17,14 +18,14 @@ export class GoogleAuthenticationStartegy
 {
   constructor(
     public readonly configService: ConfigService<
-      IsFacebookAuthenticationConfig,
+      IsGoogleAuthenticationConfig,
       true
     >,
   ) {
     super({
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL,
+      clientID: configService.get('googleClientId'),
+      clientSecret: configService.get('googleClientSecret'),
+      callbackURL: configService.get('googleCallbackUrl'),
       scope: ['email', 'profile'],
     });
   }
@@ -40,7 +41,7 @@ export class GoogleAuthenticationStartegy
         accessToken: accessToken,
         refreshToken: refreshToken,
         name: profile._json.name || '이름없음',
-        email: profile._json.email || v4(),
+        email: profile.emails?.[0].value || '',
         phoneNumber: '010-0000-0000',
         type: 'google',
       };

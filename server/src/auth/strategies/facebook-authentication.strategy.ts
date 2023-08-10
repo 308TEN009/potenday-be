@@ -24,8 +24,7 @@ export class FacebookAuthenticationStartegy
       clientID: configService.get('facebookClientId'),
       clientSecret: configService.get('facebookClientSecret'),
       callbackURL: configService.get('facebookCallbackUrl'),
-      // scope: ['email'],
-      // profileFields: ['emails', 'name'],
+      scope: ['email'],
     });
   }
 
@@ -35,13 +34,11 @@ export class FacebookAuthenticationStartegy
     profile: FacebookProfile,
   ): Promise<SocialLoginResonse | false> {
     try {
-      console.log(profile);
-
       return {
         id: profile.id,
         accessToken: accessToken,
         refreshToken: refreshToken,
-        name: profile.username,
+        name: profile.username || '이름없음',
         email: profile.email,
         phoneNumber: '010-0000-0000',
         type: 'facebook',
