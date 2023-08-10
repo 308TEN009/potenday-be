@@ -6,12 +6,17 @@ import { ConfigService } from '@nestjs/config';
 import { IsOpenAIConfig } from '@config';
 import { Configuration, OpenAIApi } from 'openai';
 import { MessageFactory } from './services/message.factory';
+import { OpenAiServiceV2 } from './services/open-ai.v2.service';
 
 @Module({
   providers: [
     {
       provide: OpenAIInjector.OPEN_AI_SERVICE,
       useClass: OpenAiService,
+    },
+    {
+      provide: OpenAIInjector.OPEN_AI_SERVICE_V2,
+      useClass: OpenAiServiceV2,
     },
     {
       provide: OpenAIInjector.MESSAGE_FACTORY,
