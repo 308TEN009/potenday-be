@@ -40,7 +40,7 @@ export interface EmploymentOpportunityService {
    * 작성중인 모든 지원공고 조회
    * @param userId 유저 PK
    */
-  findAllActiveEmploymentOpportunity(
+  findAllEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]>;
 

@@ -83,7 +83,7 @@ export class EmploymentOpportunityController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   findAllActiveEmploymentOpportunity(@User() user: UserJWTPayload) {
-    return this.eopService.findAllActiveEmploymentOpportunity(user._id);
+    return this.eopService.findAllEmploymentOpportunity(user._id);
   }
 
   @ApiOperation({

@@ -73,7 +73,7 @@ export class EmploymentOpportunityService
   }
 
   @Transactional()
-  findAllActiveEmploymentOpportunity(
+  findAllEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]> {
     return this.eopRepository.find({
@@ -113,4 +113,7 @@ export class EmploymentOpportunityService
 
     return new EmploymentOpportunityStatisticDto(completeCnt, passCnt);
   }
+
+  @Transactional()
+  async delete(eopId: string) {}
 }
