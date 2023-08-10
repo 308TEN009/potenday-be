@@ -5,9 +5,9 @@ services:
   nestjs-app:
     container_name: nestjs-app
     restart: always
-    image: qjqdn1568/nestjs-boilerplate-auth-test:latest
+    image: qjqdn1568/potenday-308-nestjs-staging:latest
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=test
       - SERVER_PORT=3000
     ports:
       - 3000:3000
@@ -26,7 +26,50 @@ services:
     depends_on:
       - nestjs-app
     volumes:
-      - ./nginx/nginx.prod.v1.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.staging.v1.conf:/etc/nginx/nginx.conf
+    networks:
+      - network-backend
+
+  # Local PostgreSQL database container
+  db-postgres:
+    container_name: db-postgres
+    image: postgres:12
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    expose:
+      - ${POSTGRES_PORT}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    networks:
+      - network-backend
+
+  # Local Redis container
+  redis:
+    container_name: redis
+    image: redis:latest
+    hostname: redis-local
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    # - Double dollars, so that the variable is not expanded by Docker Compose
+    # - Surround by quotes, so that the shell does not split the password
+    # - The ${variable:?message} syntax causes shell to exit with a non-zero
+    #   code and print a message, when the variable is not set or empty
+    command:
+      [
+        "redis-server",
+        "/usr/local/etc/redis/redis.conf",
+        "--requirepass",
+        "${REDIS_PASSWORD}"
+      ]
+    restart: always
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/acl/users.acl:/etc/redis/users.acl
     networks:
       - network-backend
 
