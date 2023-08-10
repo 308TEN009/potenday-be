@@ -35,13 +35,13 @@ services:
     container_name: db-postgres
     image: postgres:12
     ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+      - 5432:5432
     environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=potenday_308_009_test
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=db_potenday_308_009_test
     expose:
-      - ${POSTGRES_PORT}
+      - 5432
     volumes:
       - ./postgres:/var/lib/postgresql/data
     networks:
@@ -53,7 +53,7 @@ services:
     image: redis:latest
     hostname: redis-local
     ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
+      - 6379:6379
     # - Double dollars, so that the variable is not expanded by Docker Compose
     # - Surround by quotes, so that the shell does not split the password
     # - The ${variable:?message} syntax causes shell to exit with a non-zero
@@ -63,7 +63,7 @@ services:
         "redis-server",
         "/usr/local/etc/redis/redis.conf",
         "--requirepass",
-        "${REDIS_PASSWORD}"
+        "1234"
       ]
     restart: always
     volumes:
