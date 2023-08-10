@@ -1,8 +1,4 @@
-import {
-  EmploymentOpportunity,
-  EmploymentOpportunityStatus,
-  EmploymentOpportunityStatusType,
-} from '@database';
+import { EmploymentOpportunity, EmploymentOpportunityStatus } from '@database';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { In, Repository } from 'typeorm';
 import {
@@ -32,9 +28,11 @@ export class EmploymentOpportunityService
   ): Promise<void> {
     await this.eopRepository.insert(
       this.eopRepository.create({
-        ...dto,
+        companyName: dto.companyName,
+        applicationJob: dto.applicationJob,
+        jobDescription: dto.jobDescription,
+        status: EmploymentOpportunityStatus.PENDING,
         userId,
-        status: EmploymentOpportunityStatus.START,
       }),
     );
   }
@@ -73,16 +71,9 @@ export class EmploymentOpportunityService
   findAllActiveEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]> {
-    /**
-     * 활성상태는 start, pending
-     */
     return this.eopRepository.find({
       where: {
         userId,
-        status: In([
-          EmploymentOpportunityStatus.PENDING,
-          EmploymentOpportunityStatus.START,
-        ]),
       },
       relations: {
         personalStatementList: true,
@@ -109,21 +100,5 @@ export class EmploymentOpportunityService
     ).length;
 
     return new EmploymentOpportunityStatisticDto(completeCnt, 0);
-  }
-
-  @Transactional()
-  async updateOpportunityStatus(
-    eopId: string,
-    targetStatus: EmploymentOpportunityStatusType,
-  ) {
-    const updateResult = await this.eopRepository.update(eopId, {
-      status: targetStatus,
-    });
-
-    if (!updateResult?.affected) {
-      throw new NotFoundException('존재하지 않는 지원공고 수정요청');
-    }
-
-    return updateResult;
   }
 }

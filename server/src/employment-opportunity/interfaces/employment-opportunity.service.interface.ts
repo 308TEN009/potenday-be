@@ -1,8 +1,4 @@
-import {
-  EmploymentOpportunity,
-  EmploymentOpportunityStatusType,
-} from '@database';
-import { UpdateResult } from 'typeorm';
+import { EmploymentOpportunity } from '@database';
 import {
   CreateEmploymentOpportunityDto,
   EmploymentOpportunityStatisticDto,
@@ -13,6 +9,7 @@ export interface EmploymentOpportunityService {
   /**
    * 지원공고 생성
    * @param dto CreateEmploymentOpportunityDto
+   * @description 지원공고가 생성되면 상태를 Pending(작성중)으로 초기화한다.
    */
   createEmploymentOpportunity(
     userId: string,
@@ -54,16 +51,4 @@ export interface EmploymentOpportunityService {
   findEmploymentOpportunityStatistic(
     userId: string,
   ): Promise<EmploymentOpportunityStatisticDto>;
-
-  /**
-   * 지원공고 상태 수정
-   * @param eopId 지원공고 PK
-   * @param status 변경할 상태
-   *
-   * @throws {NotFoundException} 존재하지 않는 지원공고 수정
-   */
-  updateOpportunityStatus(
-    eopId: string,
-    status: EmploymentOpportunityStatusType,
-  ): Promise<UpdateResult>;
 }

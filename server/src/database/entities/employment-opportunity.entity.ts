@@ -18,7 +18,6 @@ export type EmploymentOpportunityStatusType =
   (typeof EmploymentOpportunityStatus)[keyof typeof EmploymentOpportunityStatus];
 /** 지원공고 작성상태 */
 export const EmploymentOpportunityStatus = {
-  START: 'start',
   PENDING: 'pending',
   COMPLETE: 'complete',
 } as const;
@@ -102,7 +101,7 @@ export class EmploymentOpportunity extends BaseEntity {
     type: 'varchar',
     length: 20,
   })
-  @IsIn(Object.values(EmploymentOpportunity))
+  @IsIn(Object.values(EmploymentOpportunityStatus))
   status!: EmploymentOpportunityStatusType;
 
   @ApiProperty({
