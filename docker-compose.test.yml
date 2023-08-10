@@ -30,23 +30,6 @@ services:
     networks:
       - network-backend
 
-  # Local PostgreSQL database container
-  db-postgres:
-    container_name: db-postgres
-    image: postgres:12
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=potenday_308_009_test
-      - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=db_potenday_308_009_test
-    expose:
-      - 5432
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-    networks:
-      - network-backend
-
   # Local Redis container
   redis:
     container_name: redis

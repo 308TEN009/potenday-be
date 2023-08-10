@@ -16,7 +16,7 @@ import { CreateUserDto, UpdateUserDto } from './dtos';
 import { UserService } from './interfaces';
 
 @Controller('user')
-@ApiTags('User API')
+@ApiTags('User API (유저 - 테스트용)')
 export class UserController {
   constructor(
     @Inject(UserInjector.USER_SERVICE)

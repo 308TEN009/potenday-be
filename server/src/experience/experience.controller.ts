@@ -28,7 +28,7 @@ import { CreateExperienceDto, UpdateExerienceDto } from './dtos';
 import { ExperienceService, ExperienceDetailService } from './interfaces';
 
 @Controller('experience')
-@ApiTags('Experience API')
+@ApiTags('Experience API (경험)')
 @ApiInternalServerErrorResponse({
   description: '서버 오류',
 })
