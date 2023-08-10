@@ -37,7 +37,7 @@ import { RefreshAccessTokenDto } from './dtos/refresh-access-token.dto';
 import { SignInResponseDto } from './dtos';
 
 @Controller('auth')
-@ApiTags('Auth API')
+@ApiTags('Auth API (인증/인가)')
 @ApiInternalServerErrorResponse({
   description: '서버 오류',
 })

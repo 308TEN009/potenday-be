@@ -10,7 +10,7 @@ docker_hub_password=$(aws secretsmanager get-secret-value \
     --output text | jq .docker_hub_password | tr -d '"')
 echo -e "Docker hub login ... "
 docker login -u="qjqdn1568" -p=${docker_hub_password}
-echo -e ${docker_hub_password}
+echo -e "도커 로그인 : ${docker_hub_password}"
 
 if [ "$DEPLOYMENT_GROUP_NAME" == "staging" ]; then
     # 배포 그룹이 릴리즈인 경우

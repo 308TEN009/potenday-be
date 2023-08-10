@@ -1,0 +1,58 @@
+name: CI/CD-staging
+
+on:
+  push:
+    branches: ["staging"]
+
+  workflow_dispatch:
+
+jobs:
+  # 배포 서버 애플리케이션 이미지 생성
+  docker-build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Docker hub Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get Env
+        run: |
+          mkdir ./server/envs/
+          cd ./server/envs/
+          touch ./.env.test
+          echo "${{secrets.STAGING_ENV}}" > ./.env.test
+        shell: bash
+
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: qjqdn1568/potenday-308-nestjs-staging:latest
+
+  aws-deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build-and-push
+    steps:
+      - name: Config AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create CodeDeploy Deployment
+        id: deploy
+        run: |
+          aws deploy create-deployment \
+            --application-name potenday-308-009 \
+            --deployment-group-name staging \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }}

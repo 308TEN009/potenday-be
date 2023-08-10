@@ -18,7 +18,7 @@ import { CreateAIPersonalStatementDto } from './dtos';
 import { OpenAIService } from './interfaces';
 
 @Controller('open-ai')
-@ApiTags('OpenAI API')
+@ApiTags('OpenAI API (AI)')
 @ApiInternalServerErrorResponse({
   description: '서버 오류',
 })

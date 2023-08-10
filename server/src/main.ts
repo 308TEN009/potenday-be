@@ -6,7 +6,7 @@ import { NestEnvUtil, NEST_ENV } from '@config';
 
 async function bootstrap() {
   const app = await NestFactory.create<INestApplication>(AppModule, {
-    logger: NestEnvUtil.getNodeEnv() === NEST_ENV.DEV ? ['log'] : false,
+    logger: NestEnvUtil.getNodeEnv() !== NEST_ENV.PRODUCTION ? ['log'] : false,
   });
 
   SettingModule.initialize(app);

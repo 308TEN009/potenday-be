@@ -5,9 +5,9 @@ services:
   nestjs-app:
     container_name: nestjs-app
     restart: always
-    image: qjqdn1568/nestjs-boilerplate-auth-test:latest
+    image: qjqdn1568/potenday-308-nestjs-staging:latest
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=test
       - SERVER_PORT=3000
     ports:
       - 3000:3000
@@ -26,7 +26,7 @@ services:
     depends_on:
       - nestjs-app
     volumes:
-      - ./nginx/nginx.prod.v1.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.staging.conf:/etc/nginx/nginx.conf
     networks:
       - network-backend
 
