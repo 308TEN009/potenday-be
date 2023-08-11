@@ -19,7 +19,7 @@ export class CreateAIPersonalStatementDto {
   @Type(() => AssistantInputDto)
   @ValidateNested({ each: true })
   @ArrayMinSize(1) // 지원공고 정보
-  @ArrayMaxSize(4) // 경험까지 모두
+  @ArrayMaxSize(5) // 경험 + Jd 까지 모두
   @ApiProperty({
     example: [
       {
@@ -30,6 +30,10 @@ export class CreateAIPersonalStatementDto {
       {
         type: 'emp',
         message: '네이버, 데이터분석가',
+      },
+      {
+        type: 'jd',
+        message: '시스템 최적화, 센서 드라이버 개발,시스템 셋업 자동화',
       },
     ],
   })
