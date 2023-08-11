@@ -32,14 +32,9 @@ export class BookmarkSiteService {
         userId,
       },
       order: {
-        createdAt: 'DESC',
+        updatedAt: 'DESC',
       },
     });
-  }
-
-  @Transactional()
-  findOne(id: number) {
-    return `This action returns a #${id} bookmarkSite`;
   }
 
   @Transactional()
