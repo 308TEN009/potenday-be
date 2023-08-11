@@ -1,3 +1,4 @@
+import { NestEnvUtil, NEST_ENV } from '@config';
 import { INestApplication, Logger } from '@nestjs/common';
 import { ApplicationSetting } from '../interfaces/application-setting.interface';
 
@@ -8,7 +9,10 @@ export class SetCorsService implements ApplicationSetting {
   constructor(private readonly app: INestApplication) {}
 
   init() {
-    const whitelist = ['https://extraordinary-cendol-09f96b.netlify.app'];
+    const whitelist =
+      NestEnvUtil.getNodeEnv() === NEST_ENV.PRODUCTION
+        ? ['https://extraordinary-cendol-09f96b.netlify.app']
+        : '*';
 
     this.app.enableCors({
       origin: whitelist,
