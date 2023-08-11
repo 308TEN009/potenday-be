@@ -8,8 +8,10 @@ export class SetCorsService implements ApplicationSetting {
   constructor(private readonly app: INestApplication) {}
 
   init() {
+    const whitelist = ['https://extraordinary-cendol-09f96b.netlify.app'];
+
     this.app.enableCors({
-      origin: '*',
+      origin: whitelist,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true,
     });
