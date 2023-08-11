@@ -1,4 +1,5 @@
 import { AuthName } from '@common';
+import { Experience } from '@database';
 import {
   BadRequestException,
   Body,
@@ -18,14 +19,15 @@ import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, User, UserJWTPayload } from 'src/auth';
-import { ExperienceInjector } from './common/experience.injector';
+import { ExperienceInjector } from './common';
 import { CreateExperienceDto, UpdateExerienceDto } from './dtos';
-import { ExperienceService, ExperienceDetailService } from './interfaces';
+import { ExperienceService } from './interfaces';
 
 @Controller('experience')
 @ApiTags('Experience API (경험)')
@@ -42,8 +44,6 @@ export class ExperienceController {
   constructor(
     @Inject(ExperienceInjector.EXPERIENCE_SERVICE)
     private readonly experienceService: ExperienceService,
-    @Inject(ExperienceInjector.EXPERIENCE_DETAIL_SERVICE)
-    private readonly experienceDetailService: ExperienceDetailService,
   ) {}
 
   @ApiOperation({
@@ -93,6 +93,10 @@ export class ExperienceController {
   @UseGuards(JwtAuthGuard)
   @ApiNotFoundResponse({
     description: '수정할 경험이 존재하지 않음',
+  })
+  @ApiOkResponse({
+    type: Experience,
+    description: '수정된 경험 데이터',
   })
   updateExperience(
     @Param('expId', ParseUUIDPipe) expId: string,
