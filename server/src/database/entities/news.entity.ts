@@ -26,6 +26,20 @@ export class News extends BaseEntity {
   _id!: string;
 
   @ApiProperty({
+    description: '기업명',
+    type: String,
+    example: '4대500컴퍼니',
+  })
+  @Column({
+    name: 'company_name',
+    type: 'varchar',
+    length: 255,
+  })
+  @IsString()
+  @IsNotEmpty()
+  companyName!: string;
+
+  @ApiProperty({
     description: '뉴스 제목',
     type: String,
     example: '줌, 스크래핑 관련 약관 업데이트... AI 훈련에는 동의 필요',

@@ -20,6 +20,7 @@ export class NewsService implements IsNewsService {
     await this.newsRepository.insert(
       this.newsRepository.create({
         userId,
+        companyName: dto.companyName,
         title: dto.title,
         content: dto.content,
         url: dto.url,
