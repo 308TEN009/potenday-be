@@ -48,7 +48,7 @@ export class EmploymentOpportunityService
         companyName: dto.companyName,
         applicationJob: dto.applicationJob,
         jobDescription: dto.jobDescription,
-        status: EmploymentOpportunityStatus.PENDING, // default status is Pending
+        status: EmploymentOpportunityStatus.START, // default status is Pending
         applyStatus: EmploymentOpportunityApplyStatus.DRAFT, // default status is Draft
         userId,
       }),
