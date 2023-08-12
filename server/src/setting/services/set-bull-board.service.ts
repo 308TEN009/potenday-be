@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@bull-board/express';
 import { Queue } from 'bull';
 import { BullAdapter } from '@bull-board/api/bullAdapter';
 import { ApplicationSetting } from '../interfaces/application-setting.interface';
+import { QueueName } from '@queue';
 
 /**
  * Bull-board library Setting
@@ -15,7 +16,7 @@ export class SetBullBoardService implements ApplicationSetting {
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath('/bull-board'); // set up base path (bull board)
 
-    const aQueue1 = this.app.get<Queue>(`BullQueue_Test`); // get queue from app
+    const aQueue1 = this.app.get<Queue>(`BullQueue_${QueueName.BASIC_QUEUE}`); // get queue from app
 
     createBullBoard({
       queues: [new BullAdapter(aQueue1)],

@@ -1,8 +1,10 @@
 import { AuthName } from '@common';
+import { Experience } from '@database';
 import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -18,14 +20,15 @@ import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { JwtAuthGuard, User, UserJWTPayload } from 'src/auth';
-import { ExperienceInjector } from './common/experience.injector';
+import { ExperienceInjector } from './common';
 import { CreateExperienceDto, UpdateExerienceDto } from './dtos';
-import { ExperienceService, ExperienceDetailService } from './interfaces';
+import { ExperienceService } from './interfaces';
 
 @Controller('experience')
 @ApiTags('Experience API (경험)')
@@ -42,8 +45,6 @@ export class ExperienceController {
   constructor(
     @Inject(ExperienceInjector.EXPERIENCE_SERVICE)
     private readonly experienceService: ExperienceService,
-    @Inject(ExperienceInjector.EXPERIENCE_DETAIL_SERVICE)
-    private readonly experienceDetailService: ExperienceDetailService,
   ) {}
 
   @ApiOperation({
@@ -94,6 +95,10 @@ export class ExperienceController {
   @ApiNotFoundResponse({
     description: '수정할 경험이 존재하지 않음',
   })
+  @ApiOkResponse({
+    type: Experience,
+    description: '수정된 경험 데이터',
+  })
   updateExperience(
     @Param('expId', ParseUUIDPipe) expId: string,
     @Body() dto: UpdateExerienceDto,
@@ -103,5 +108,22 @@ export class ExperienceController {
     }
 
     return this.experienceService.updateExperience(expId, dto);
+  }
+
+  @ApiOperation({
+    summary: '경험 삭제',
+    description: `
+  - 특정 경험과 경험 하위의 경험 세부사항을 모두 삭제합니다.
+    `,
+  })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @Delete(':expId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiNotFoundResponse({
+    description: '삭제할 경험이 존재하지 않음',
+  })
+  deleteExperience(@Param('expId', ParseUUIDPipe) expId: string) {
+    return this.experienceService.deleteExperience(expId);
   }
 }

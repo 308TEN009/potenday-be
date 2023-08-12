@@ -1,10 +1,14 @@
 import {
   EmploymentOpportunity,
+  EmploymentOpportunityApplyStatus,
   EmploymentOpportunityStatus,
-  EmploymentOpportunityStatusType,
 } from '@database';
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { QueueName } from '@queue';
+import { Queue } from 'bull';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   InjectTransactionRepository,
   Transactional,
@@ -12,8 +16,14 @@ import {
 import {
   CreateEmploymentOpportunityDto,
   EmploymentOpportunityStatisticDto,
+  UpdateEmploymentOpportunityDto,
 } from '../dtos';
-import { EmploymentOpportunityService as IsEmploymentOpportunityService } from '../interfaces';
+import {
+  AutoDeleteEmploymentOpportunityDelay,
+  AutoDeleteEmploymentOpportunityJob,
+  AutoDeleteEmploymentOpportunityJobName,
+  EmploymentOpportunityService as IsEmploymentOpportunityService,
+} from '../interfaces';
 
 @Injectable()
 export class EmploymentOpportunityService
@@ -22,20 +32,52 @@ export class EmploymentOpportunityService
   constructor(
     @InjectTransactionRepository(EmploymentOpportunity)
     private readonly eopRepository: Repository<EmploymentOpportunity>,
+    @InjectQueue(QueueName.BASIC_QUEUE)
+    private readonly queue: Queue<AutoDeleteEmploymentOpportunityJob>,
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
   ) {}
 
   @Transactional()
   async createEmploymentOpportunity(
     userId: string,
     dto: CreateEmploymentOpportunityDto,
-  ): Promise<void> {
-    await this.eopRepository.insert(
+  ): Promise<string> {
+    const insertResult = await this.eopRepository.insert(
       this.eopRepository.create({
-        ...dto,
+        companyName: dto.companyName,
+        applicationJob: dto.applicationJob,
+        jobDescription: dto.jobDescription,
+        status: EmploymentOpportunityStatus.PENDING, // default status is Pending
+        applyStatus: EmploymentOpportunityApplyStatus.DRAFT, // default status is Draft
         userId,
-        status: EmploymentOpportunityStatus.START,
       }),
     );
+
+    const eopId = insertResult.identifiers[0]._id;
+    await this.queue.add(
+      AutoDeleteEmploymentOpportunityJobName,
+      {
+        eopId: eopId,
+      },
+      {
+        delay: AutoDeleteEmploymentOpportunityDelay,
+      },
+    );
+
+    return eopId;
+  }
+
+  @Transactional()
+  async updateEmploymentOpportunity(
+    eopId: string,
+    dto: UpdateEmploymentOpportunityDto,
+  ): Promise<void> {
+    const updateResult = await this.eopRepository.update(eopId, dto);
+
+    if (!updateResult?.affected) {
+      throw new NotFoundException('존재하지 않는 지원공고 수정 요청');
+    }
   }
 
   @Transactional()
@@ -57,19 +99,12 @@ export class EmploymentOpportunityService
   }
 
   @Transactional()
-  findAllActiveEmploymentOpportunity(
+  findAllEmploymentOpportunity(
     userId: string,
   ): Promise<EmploymentOpportunity[]> {
-    /**
-     * 활성상태는 start, pending
-     */
     return this.eopRepository.find({
       where: {
         userId,
-        status: In([
-          EmploymentOpportunityStatus.PENDING,
-          EmploymentOpportunityStatus.START,
-        ]),
       },
       relations: {
         personalStatementList: true,
@@ -87,30 +122,32 @@ export class EmploymentOpportunityService
     const eopList = await this.eopRepository.find({
       where: {
         userId,
+        // 작성완료된 지원공고만 서류합격일 수 있음
         status: In([EmploymentOpportunityStatus.COMPLETE]),
       },
     });
 
+    // 지원완료된 지원공고
     const completeCnt = eopList.filter(
       (eop) => eop.status === EmploymentOpportunityStatus.COMPLETE,
     ).length;
 
-    return new EmploymentOpportunityStatisticDto(completeCnt, 0);
+    // 서류합격된 지원공고
+    const passCnt = eopList.filter(
+      (eop) => eop.applyStatus === EmploymentOpportunityApplyStatus.PASS,
+    ).length;
+
+    return new EmploymentOpportunityStatisticDto(completeCnt, passCnt);
   }
 
-  @Transactional()
-  async updateOpportunityStatus(
-    eopId: string,
-    targetStatus: EmploymentOpportunityStatusType,
-  ) {
-    const updateResult = await this.eopRepository.update(eopId, {
-      status: targetStatus,
-    });
+  async delete(eopId: string) {
+    const deleteResult = await this.entityManager.softDelete(
+      EmploymentOpportunity,
+      eopId,
+    );
 
-    if (!updateResult?.affected) {
-      throw new NotFoundException('존재하지 않는 지원공고 수정요청');
+    if (!deleteResult?.affected) {
+      throw new NotFoundException('존재하지 않는 지원공고 삭제 요청');
     }
-
-    return updateResult;
   }
 }

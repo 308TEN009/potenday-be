@@ -34,10 +34,7 @@ export class ExperienceService implements IsExperienceService {
   }
 
   @Transactional()
-  async updateExperience(
-    expId: string,
-    dto: UpdateExerienceDto,
-  ): Promise<void> {
+  async updateExperience(expId: string, dto: UpdateExerienceDto) {
     const updateResult = await this.experienceRepository.update(expId, {
       title: dto.title,
     });
@@ -61,6 +58,26 @@ export class ExperienceService implements IsExperienceService {
         ),
       );
     }
+
+    const exp = await this.findOne(expId);
+
+    if (!exp) {
+      throw new Error(`경험(${expId}) 처리 중 오류가 발생했습니다.`);
+    }
+
+    return exp;
+  }
+
+  @Transactional()
+  private findOne(expId: string) {
+    return this.experienceRepository.findOne({
+      where: {
+        _id: expId,
+      },
+      relations: {
+        experienceDetailList: true,
+      },
+    });
   }
 
   @Transactional()
@@ -76,5 +93,16 @@ export class ExperienceService implements IsExperienceService {
         createdAt: 'DESC',
       },
     });
+  }
+
+  @Transactional()
+  async deleteExperience(expId: string): Promise<void> {
+    const exp = await this.findOne(expId);
+
+    if (!exp) {
+      throw new NotFoundException('삭제할 경험이 존재하지 않습니다.');
+    }
+
+    await this.experienceRepository.softRemove(exp);
   }
 }

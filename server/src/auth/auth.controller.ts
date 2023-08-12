@@ -30,6 +30,7 @@ import {
   JwtAuthGuard,
   FacebookAuthGuard,
   GoogleAuthGuard,
+  JwtAuthRefreshGuard,
 } from './guards';
 import { RedirectInterceptor } from './interceptors';
 import { SocialLoginResonse, UserJWTPayload } from './interfaces';
@@ -183,7 +184,7 @@ export class AuthController {
   })
   @Post('token')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthRefreshGuard)
   @ApiOkResponse({
     description: '재발급된 엑세스토큰과 리프레시토큰을 포함하는 객체',
     type: PickType(SignInResponseDto, ['accessToken', 'refreshToken']),

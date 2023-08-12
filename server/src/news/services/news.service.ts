@@ -20,6 +20,7 @@ export class NewsService implements IsNewsService {
     await this.newsRepository.insert(
       this.newsRepository.create({
         userId,
+        companyName: dto.companyName,
         title: dto.title,
         content: dto.content,
         url: dto.url,
@@ -32,8 +33,23 @@ export class NewsService implements IsNewsService {
     const updateResult = await this.newsRepository.update(newsId, dto);
 
     if (!updateResult?.affected) {
-      throw new NotFoundException('존재하지 않는 뉴스 스크랩 수정 요청');
+      throw new NotFoundException('수정할 뉴스가 존재하지 않습니다.');
     }
+  }
+
+  @Transactional()
+  async findOne(newId: string) {
+    const news = await this.newsRepository.findOne({
+      where: {
+        _id: newId,
+      },
+    });
+
+    if (!news) {
+      throw new NotFoundException('뉴스가 존재하지 않습니다.');
+    }
+
+    return news;
   }
 
   @Transactional()
@@ -42,15 +58,16 @@ export class NewsService implements IsNewsService {
       where: {
         userId,
       },
+      order: {
+        updatedAt: 'desc',
+      },
     });
   }
 
   @Transactional()
   async delete(newsId: string): Promise<void> {
-    const deleteResult = await this.newsRepository.softDelete(newsId);
+    const news = await this.findOne(newsId);
 
-    if (!deleteResult?.affected) {
-      throw new NotFoundException('존재하지 않는 뉴스 스크랩 삭제 요청');
-    }
+    await this.newsRepository.softDelete(news._id);
   }
 }

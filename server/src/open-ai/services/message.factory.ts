@@ -14,7 +14,7 @@ export class MessageFactory implements IsMessageFactory {
         return new MessageDto(
           'user',
           `${content} 
-위의 질문에 대한 답변을 300자 이내로 작성해줘`,
+위의 질문에 대한 답변을 작성해줘`,
         );
       case AIMessageInput.EXPERIENCE:
         return new MessageDto(
@@ -26,6 +26,12 @@ ${content}`,
         return new MessageDto(
           'assistant',
           `지원할 채용공고는 아래와 같아.
+${content}`,
+        );
+      case AIMessageInput.JOB_DESCRIPTION:
+        return new MessageDto(
+          'assistant',
+          `지원할 직무의 설명은 아래와 같아.
 ${content}`,
         );
       case AIMessageInput.ROLE:

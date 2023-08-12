@@ -63,6 +63,10 @@ export class RefreshTokenService implements IsRefreshTokenService {
     });
   }
 
+  /**
+   * 리프레시토큰 만료일 조회
+   * @returns Date, 리프레시 토큰의 만료일
+   */
   private getExpiredIn(): Date {
     const now = new Date(Date.now());
     const expiredIn = addDays(now, TokenMetadata.REFRESH_TOKEN_EXPIRED_DAYS);

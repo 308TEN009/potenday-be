@@ -57,6 +57,7 @@ export class AuthService {
       // 유저 리프레시 토큰 추가 발급
       const refreshToken = await this.refreshTokenService.sign(user._id);
 
+      // 로그아웃 상태 제거
       await this.blackListService.deleteBlackList(user._id);
 
       return new SignInResponseDto(user, accessToken, refreshToken);
@@ -85,8 +86,6 @@ export class AuthService {
         role: 'admin',
         authType: profile.type,
       });
-
-      await this.blackListService.deleteBlackList(user._id);
 
       return new SignInResponseDto(user, accessToken, refreshToken);
     }

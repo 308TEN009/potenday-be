@@ -2,10 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  UserJWTPayload,
-  UserRefreshJwtPayload,
-} from '../interfaces/user-jwt-payload.interface';
+import { UserJWTPayload } from '../interfaces/user-jwt-payload.interface';
 import { Request } from 'express';
 import { IsAuthenticationConfig } from '@config';
 import { extractTokenFromHeader } from '../utils';
@@ -27,7 +24,6 @@ export class RefreshJwtStrategy extends PassportStrategy(
       ]),
       ignoreExpiration: true, // 만료 여부 무시
       secretOrKey: configService.get('jwtPrivateKey'),
-      passReqToCallback: true,
     });
   }
 
@@ -37,19 +33,7 @@ export class RefreshJwtStrategy extends PassportStrategy(
    * @returns UserRefreshJwtPayload, 리프레시 토큰이 쿠키에 존재하고 위변조되지 않은 만료된 엑세스 토큰이 포함된 경우
    * @returns null, 리프레시 토큰이 쿠키에 존재하지 않거나 엑세스 토큰이 위변조된 경우
    */
-  validate(
-    req: Request,
-    accessTokenPayload: UserJWTPayload,
-  ): UserRefreshJwtPayload | null {
-    const refreshToken = extractTokenFromHeader(req);
-
-    if (!refreshToken) {
-      return null;
-    }
-
-    return {
-      ...accessTokenPayload,
-      refreshToken,
-    };
+  validate(accessTokenPayload: UserJWTPayload): UserJWTPayload | null {
+    return accessTokenPayload;
   }
 }
