@@ -18,6 +18,7 @@ export type EmploymentOpportunityStatusType =
   (typeof EmploymentOpportunityStatus)[keyof typeof EmploymentOpportunityStatus];
 /** 지원공고 작성상태 */
 export const EmploymentOpportunityStatus = {
+  START: 'start',
   PENDING: 'pending',
   COMPLETE: 'complete',
 } as const;
