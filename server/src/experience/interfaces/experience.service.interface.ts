@@ -24,4 +24,12 @@ export interface ExperienceService {
    * @param userId 유저 PK
    */
   findAllExperience(userId: string): Promise<Experience[]>;
+
+  /**
+   * 경험 삭제
+   * @param expId 경험 PK
+   *
+   * @throws {NotFoundException} 삭제할 경험이 존재하지 않음
+   */
+  deleteExperience(expId: string): Promise<void>;
 }

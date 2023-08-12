@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -107,5 +108,22 @@ export class ExperienceController {
     }
 
     return this.experienceService.updateExperience(expId, dto);
+  }
+
+  @ApiOperation({
+    summary: '경험 삭제',
+    description: `
+  - 특정 경험과 경험 하위의 경험 세부사항을 모두 삭제합니다.
+    `,
+  })
+  @ApiBearerAuth(AuthName.ACCESS_TOKEN)
+  @Delete(':expId')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiNotFoundResponse({
+    description: '삭제할 경험이 존재하지 않음',
+  })
+  deleteExperience(@Param('expId', ParseUUIDPipe) expId: string) {
+    return this.experienceService.deleteExperience(expId);
   }
 }

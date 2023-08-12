@@ -94,4 +94,15 @@ export class ExperienceService implements IsExperienceService {
       },
     });
   }
+
+  @Transactional()
+  async deleteExperience(expId: string): Promise<void> {
+    const exp = await this.findOne(expId);
+
+    if (!exp) {
+      throw new NotFoundException('삭제할 경험이 존재하지 않습니다.');
+    }
+
+    await this.experienceRepository.softRemove(exp);
+  }
 }
