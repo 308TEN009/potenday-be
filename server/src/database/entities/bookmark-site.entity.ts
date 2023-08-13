@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 import {
   Column,
   Entity,
@@ -37,7 +37,7 @@ export class BookmarkSite extends BaseEntity {
     length: 255,
   })
   @IsString()
-  @IsNotEmpty()
+  @Length(1, 255)
   name!: string;
 
   @ApiProperty({
@@ -48,10 +48,10 @@ export class BookmarkSite extends BaseEntity {
   @Column({
     name: 'url',
     type: 'varchar',
-    length: 255,
+    length: 500,
   })
   @IsString()
-  @IsNotEmpty()
+  @Length(1, 500)
   url!: string;
 
   @ApiProperty({
